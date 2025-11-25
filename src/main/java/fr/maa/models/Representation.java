@@ -18,5 +18,35 @@ public class Representation {
         this.salle = salle;
     }
 
-    // getters/setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getIdSpectacle() {
+        return idSpectacle;
+    }
+
+    public void setIdSpectacle(int idSpectacle) {
+        this.idSpectacle = idSpectacle;
+    }
+
+    public LocalDateTime getDateHeure() {
+        return dateHeure;
+    }
+
+    public void setDateHeure(LocalDateTime dateHeure) {
+        this.dateHeure = dateHeure;
+    }
+
+    public String getSalle() {
+        return salle;
+    }
+
+    public void setSalle(String salle) {
+        this.salle = salle;
+    }
 }

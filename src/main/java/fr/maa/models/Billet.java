@@ -16,5 +16,35 @@ public class Billet {
         this.idClient = idClient;
     }
 
-    // getters/setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public int getIdRepresentation() {
+        return idRepresentation;
+    }
+
+    public void setIdRepresentation(int idRepresentation) {
+        this.idRepresentation = idRepresentation;
+    }
+
+    public int getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(int idClient) {
+        this.idClient = idClient;
+    }
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fr.maa.controllers.RepresentationListController">
+
+    <center>
+        <TableView fx:id="tableReps">
+            <columns>
+                <TableColumn text="ID"/>
+                <TableColumn text="Spectacle"/>
+                <TableColumn text="Date"/>
+                <TableColumn text="Salle"/>
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER" padding="10">
+            <Button text="Ajouter" onAction="#addRepresentation"/>
+            <Button text="Retour" onAction="#back"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

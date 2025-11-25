@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fr.maa.controllers.ClientListController">
+
+    <center>
+        <TableView fx:id="tableClients">
+            <columns>
+                <TableColumn text="ID" />
+                <TableColumn text="Pseudo" />
+                <TableColumn text="Nom" />
+                <TableColumn text="Prenom" />
+                <TableColumn text="Email" />
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER" padding="10">
+            <Button text="Ajouter" onAction="#addClient"/>
+            <Button text="Modifier" onAction="#editClient"/>
+            <Button text="Supprimer" onAction="#deleteClient"/>
+            <Button text="Retour" onAction="#back"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="fr.maa.controllers.BilletFormController"
+      spacing="10" padding="20">
+
+    <children>
+        <Label text="Numéro du billet"/>
+        <TextField fx:id="fieldNumero"/>
+
+        <Label text="ID Représentation"/>
+        <TextField fx:id="fieldIdRep"/>
+
+        <Label text="ID Client"/>
+        <TextField fx:id="fieldIdClient"/>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="Enregistrer" onAction="#save"/>
+            <Button text="Annuler" onAction="#cancel"/>
+        </HBox>
+    </children>
+
+</VBox>

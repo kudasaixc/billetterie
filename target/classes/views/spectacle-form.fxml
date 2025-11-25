@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GridPane xmlns="http://javafx.com/javafx/21"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="fr.maa.controllers.SpectacleFormController"
+          hgap="10" vgap="10" padding="20">
+
+    <children>
+        <Label text="Titre" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldTitre" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Lieu" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldLieu" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Affiche" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldAffiche" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Tags" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldTags" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <Label text="Durée" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldDuree" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <Label text="Desc Courte" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <TextArea fx:id="fieldDescCourte" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <Label text="Desc Longue" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <TextArea fx:id="fieldDescLongue" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+        <Label text="Langue" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldLangue" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+        <Label text="Âge min" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldAgeMin" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+
+        <Label text="Photos" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldPhotos" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+
+        <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="10" GridPane.columnIndex="0" GridPane.columnSpan="2">
+            <Button text="Enregistrer" onAction="#save"/>
+            <Button text="Annuler" onAction="#cancel"/>
+        </HBox>
+    </children>
+
+</GridPane>

@@ -2,6 +2,7 @@ package fr.maa.controllers;
 
 import fr.maa.dao.ClientDAO;
 import fr.maa.models.Client;
+import fr.maa.utils.SelectedClient;
 import fr.maa.utils.SceneSwitcher;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;

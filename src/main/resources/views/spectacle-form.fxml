@@ -6,8 +6,10 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.*?>
 <?import java.net.URL?>
+<?import javafx.scene.image.ImageView?>
 
 <GridPane xmlns="http://javafx.com/javafx/21"
           xmlns:fx="http://javafx.com/fxml/1"
@@ -53,7 +55,16 @@
         <Label text="Photos" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
         <TextField fx:id="fieldPhotos" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
 
-        <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="10" GridPane.columnIndex="0" GridPane.columnSpan="2">
+        <Label text="Image" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
+        <VBox spacing="10" GridPane.rowIndex="10" GridPane.columnIndex="1">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Importer une image" onAction="#importImage"/>
+                <Label fx:id="imagePathLabel" text="Aucune image" />
+            </HBox>
+            <ImageView fx:id="imagePreview" fitWidth="150" fitHeight="150" preserveRatio="true" />
+        </VBox>
+
+        <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="11" GridPane.columnIndex="0" GridPane.columnSpan="2">
             <Button text="Enregistrer" onAction="#save"/>
             <Button text="Annuler" onAction="#cancel"/>
         </HBox>

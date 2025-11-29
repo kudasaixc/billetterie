@@ -10,6 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -25,7 +26,16 @@ public final class TablePaginationHelper {
                                  Function<String, Predicate<T>> predicateFactory,
                                  int pageSize) {
 
-        FilteredList<T> filtered = new FilteredList<>(data, predicateFactory.apply(""));
+        Objects.requireNonNull(table, "table must not be null");
+        Objects.requireNonNull(searchField, "searchField must not be null");
+        Objects.requireNonNull(pagination, "pagination must not be null");
+        Objects.requireNonNull(data, "data must not be null");
+        Objects.requireNonNull(predicateFactory, "predicateFactory must not be null");
+        if (pageSize <= 0) {
+            throw new IllegalArgumentException("pageSize must be greater than zero");
+        }
+
+        FilteredList<T> filtered = new FilteredList<>(data, predicateFactory.apply(normalizeQuery("")));
         SortedList<T> sorted = new SortedList<>(filtered);
         sorted.comparatorProperty().bind(table.comparatorProperty());
 
@@ -38,10 +48,8 @@ public final class TablePaginationHelper {
             updateTableItems(table, sorted, currentPage, pageSize);
         };
 
-        searchField.textProperty().addListener((obs, oldValue, newValue) -> {
-            String query = newValue == null ? "" : newValue.trim().toLowerCase();
-            filtered.setPredicate(predicateFactory.apply(query));
-        });
+        searchField.textProperty().addListener((obs, oldValue, newValue) ->
+                filtered.setPredicate(predicateFactory.apply(normalizeQuery(newValue))));
 
         filtered.addListener((ListChangeListener<T>) change -> updatePagination.run());
         table.comparatorProperty().addListener((obs, oldComp, newComp) ->
@@ -54,6 +62,10 @@ public final class TablePaginationHelper {
         });
 
         updatePagination.run();
+    }
+
+    private static String normalizeQuery(String query) {
+        return query == null ? "" : query.trim().toLowerCase();
     }
 
     private static <T> void updateTableItems(TableView<T> table, SortedList<T> sorted, int pageIndex, int pageSize) {

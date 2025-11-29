@@ -6,6 +6,8 @@ public class Billet {
     private String numero;
     private int idRepresentation;
     private int idClient;
+    private String representationLabel;
+    private String clientName;
 
     public Billet() {}
 
@@ -46,5 +48,21 @@ public class Billet {
 
     public void setIdClient(int idClient) {
         this.idClient = idClient;
+    }
+
+    public String getRepresentationLabel() {
+        return representationLabel;
+    }
+
+    public void setRepresentationLabel(String representationLabel) {
+        this.representationLabel = representationLabel;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 }

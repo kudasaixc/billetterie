@@ -12,7 +12,7 @@ public class RepresentationDAO {
 
     public List<Representation> getAll() {
         List<Representation> list = new ArrayList<>();
-        String sql = "SELECT * FROM representation";
+        String sql = "SELECT r.*, s.titre AS spectacle_title FROM representation r JOIN spectacle s ON r.id_spectacle = s.id";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -24,6 +24,7 @@ public class RepresentationDAO {
                         rs.getTimestamp("date_heure").toLocalDateTime(),
                         rs.getString("salle")
                 );
+                r.setSpectacleTitle(rs.getString("spectacle_title"));
                 list.add(r);
             }
 

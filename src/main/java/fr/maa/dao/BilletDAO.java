@@ -12,7 +12,11 @@ public class BilletDAO {
 
     public List<Billet> getAll() {
         List<Billet> list = new ArrayList<>();
-        String sql = "SELECT * FROM billet";
+        String sql = "SELECT b.*, r.date_heure, s.titre AS spectacle_title, c.nom AS client_nom, c.prenom AS client_prenom " +
+                "FROM billet b " +
+                "JOIN representation r ON b.id_representation = r.id " +
+                "JOIN spectacle s ON r.id_spectacle = s.id " +
+                "JOIN client c ON b.id_client = c.id";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -24,6 +28,8 @@ public class BilletDAO {
                         rs.getInt("id_representation"),
                         rs.getInt("id_client")
                 );
+                b.setRepresentationLabel(rs.getString("spectacle_title") + " - " + rs.getTimestamp("date_heure").toLocalDateTime());
+                b.setClientName(rs.getString("client_prenom") + " " + rs.getString("client_nom"));
                 list.add(b);
             }
 

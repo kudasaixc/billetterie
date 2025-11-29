@@ -14,11 +14,11 @@
     <center>
         <TableView fx:id="tableClients">
             <columns>
-                <TableColumn text="ID" />
-                <TableColumn text="Pseudo" />
-                <TableColumn text="Nom" />
-                <TableColumn text="Prenom" />
-                <TableColumn text="Email" />
+                <TableColumn fx:id="colId" text="ID" />
+                <TableColumn fx:id="colPseudo" text="Pseudo" />
+                <TableColumn fx:id="colNom" text="Nom" />
+                <TableColumn fx:id="colPrenom" text="Prenom" />
+                <TableColumn fx:id="colEmail" text="Email" />
             </columns>
         </TableView>
     </center>

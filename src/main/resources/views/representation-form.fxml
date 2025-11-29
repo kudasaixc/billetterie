@@ -31,7 +31,10 @@
         <Label text="Salle" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
         <TextField fx:id="fieldSalle" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-        <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2">
+        <Label text="Places disponibles" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldPlaces" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2">
             <Button text="Enregistrer" onAction="#save"/>
             <Button text="Annuler" onAction="#cancel"/>
         </HBox>

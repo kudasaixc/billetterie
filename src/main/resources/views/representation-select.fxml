@@ -13,8 +13,8 @@
 
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="fr.maa.controllers.RepresentationListController"
-      spacing="20">
+      fx:controller="fr.maa.controllers.RepresentationSelectController"
+      spacing="15" prefWidth="700" prefHeight="500">
 
     <stylesheets>
         <URL value="@../application.css" />
@@ -25,29 +25,26 @@
     </padding>
 
     <children>
-        <HBox styleClass="search-bar">
-            <Label text="Représentations" styleClass="h1" />
-            <TextField fx:id="searchField" promptText="Rechercher une représentation" />
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Sélection de la représentation" styleClass="h2" />
+            <TextField fx:id="searchField" promptText="Filtrer par date ou salle" HBox.hgrow="ALWAYS"/>
         </HBox>
 
-        <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+        <VBox styleClass="card" spacing="10" VBox.vgrow="ALWAYS">
             <TableView fx:id="tableReps" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" text="ID"/>
-                    <TableColumn fx:id="colSpectacle" text="Spectacle"/>
-                    <TableColumn fx:id="colDate" text="Date"/>
-                    <TableColumn fx:id="colSalle" text="Salle"/>
-                    <TableColumn fx:id="colPlaces" text="Places"/>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="60" />
+                    <TableColumn fx:id="colDate" text="Date" prefWidth="200" />
+                    <TableColumn fx:id="colSalle" text="Salle" prefWidth="200" />
+                    <TableColumn fx:id="colPlaces" text="Places restantes" prefWidth="150" />
                 </columns>
             </TableView>
-
             <Pagination fx:id="pagination" />
         </VBox>
 
-        <HBox styleClass="actions-bar">
-            <Button text="Ajouter" onAction="#addRepresentation"/>
-            <Button text="Supprimer" onAction="#deleteRepresentation"/>
-            <Button text="Retour" onAction="#back"/>
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button text="Annuler" onAction="#cancel" />
+            <Button text="Sélectionner" onAction="#select" />
         </HBox>
     </children>
 </VBox>

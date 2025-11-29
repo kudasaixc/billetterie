@@ -8,15 +8,17 @@ public class Representation {
     private int idSpectacle;
     private LocalDateTime dateHeure;
     private String salle;
+    private int placesDisponibles;
     private String spectacleTitle;
 
     public Representation() {}
 
-    public Representation(int id, int idSpectacle, LocalDateTime dateHeure, String salle) {
+    public Representation(int id, int idSpectacle, LocalDateTime dateHeure, String salle, int placesDisponibles) {
         this.id = id;
         this.idSpectacle = idSpectacle;
         this.dateHeure = dateHeure;
         this.salle = salle;
+        this.placesDisponibles = placesDisponibles;
     }
 
     public int getId() {
@@ -49,6 +51,14 @@ public class Representation {
 
     public void setSalle(String salle) {
         this.salle = salle;
+    }
+
+    public int getPlacesDisponibles() {
+        return placesDisponibles;
+    }
+
+    public void setPlacesDisponibles(int placesDisponibles) {
+        this.placesDisponibles = placesDisponibles;
     }
 
     public String getSpectacleTitle() {

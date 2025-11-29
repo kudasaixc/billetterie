@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.*?>
-<?import java.net.URL?>
 
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="fr.maa.controllers.BilletFormController"
-      spacing="10" styleClass="card">
+      spacing="20">
 
     <stylesheets>
         <URL value="@../application.css" />
@@ -22,19 +25,48 @@
     </padding>
 
     <children>
-        <Label text="Numéro du billet"/>
-        <TextField fx:id="fieldNumero"/>
+        <Label text="Achat de billet" styleClass="h1" />
 
-        <Label text="ID Représentation"/>
-        <TextField fx:id="fieldIdRep"/>
+        <GridPane hgap="10" vgap="12" styleClass="card">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25" />
+                <ColumnConstraints percentWidth="45" />
+                <ColumnConstraints percentWidth="30" />
+            </columnConstraints>
 
-        <Label text="ID Client"/>
-        <TextField fx:id="fieldIdClient"/>
+            <rowConstraints>
+                <RowConstraints minHeight="40" />
+                <RowConstraints minHeight="40" />
+                <RowConstraints minHeight="40" />
+                <RowConstraints minHeight="40" />
+            </rowConstraints>
 
-        <HBox spacing="10" alignment="CENTER">
-            <Button text="Enregistrer" onAction="#save"/>
-            <Button text="Annuler" onAction="#cancel"/>
+            <Label text="Client" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+            <TextField fx:id="clientField" editable="false" promptText="Aucun client sélectionné"
+                       GridPane.rowIndex="0" GridPane.columnIndex="1" />
+            <Button text="Sélectionner client" onAction="#openClientSelection"
+                    GridPane.rowIndex="0" GridPane.columnIndex="2" />
+
+            <Label text="Spectacle" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+            <TextField fx:id="spectacleField" editable="false" promptText="Aucun spectacle sélectionné"
+                       GridPane.rowIndex="1" GridPane.columnIndex="1" />
+            <Button text="Sélectionner spectacle" onAction="#openSpectacleSelection"
+                    GridPane.rowIndex="1" GridPane.columnIndex="2" />
+
+            <Label text="Représentation" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+            <TextField fx:id="representationField" editable="false" promptText="Choisir une représentation"
+                       GridPane.rowIndex="2" GridPane.columnIndex="1" />
+            <Button text="Sélectionner représentation" onAction="#openRepresentationSelection"
+                    GridPane.rowIndex="2" GridPane.columnIndex="2" />
+
+            <Label text="Prix (€)" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+            <TextField fx:id="prixField" promptText="Ex: 49.90"
+                       GridPane.rowIndex="3" GridPane.columnIndex="1" />
+        </GridPane>
+
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button text="Annuler" onAction="#cancel" />
+            <Button text="Confirmer l'achat" onAction="#confirmPurchase" />
         </HBox>
     </children>
-
 </VBox>

@@ -7,25 +7,25 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="fr.maa.controllers.BilletListController">
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="fr.maa.controllers.BilletListController"
+      spacing="20" padding="20">
 
-    <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10" />
-            </padding>
+    <stylesheets>
+        <URL value="@../application.css" />
+    </stylesheets>
 
-            <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Recherche:" />
-                <TextField fx:id="searchField" promptText="Rechercher un billet" />
-            </HBox>
+    <children>
+        <HBox styleClass="search-bar">
+            <Label text="Billetterie" styleClass="h1" />
+            <TextField fx:id="searchField" promptText="Rechercher un billet" />
+        </HBox>
 
+        <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
             <TableView fx:id="tableBillets" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="colId" text="ID"/>
@@ -37,18 +37,12 @@
 
             <Pagination fx:id="pagination" />
         </VBox>
-    </center>
 
-    <bottom>
-        <HBox spacing="10" alignment="CENTER">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10" />
-            </padding>
+        <HBox styleClass="actions-bar">
             <Button text="Ajouter" onAction="#addBillet"/>
             <Button text="Modifier" onAction="#editBillet"/>
             <Button text="Supprimer" onAction="#deleteBillet"/>
             <Button text="Retour" onAction="#back"/>
         </HBox>
-    </bottom>
-
-</BorderPane>
+    </children>
+</VBox>

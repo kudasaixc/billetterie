@@ -6,7 +6,6 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.geometry.Insets?>
 
 <GridPane xmlns="http://javafx.com/javafx/21"
           xmlns:fx="http://javafx.com/fxml/1"

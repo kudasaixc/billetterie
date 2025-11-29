@@ -4,11 +4,17 @@ import fr.maa.dao.SpectacleDAO;
 import fr.maa.models.Spectacle;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedSpectacle;
+import fr.maa.utils.TablePaginationHelper;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.util.function.Predicate;
 
 public class SpectacleListController {
 
@@ -21,7 +27,11 @@ public class SpectacleListController {
     @FXML private TableColumn<Spectacle, String> colLieu;
 
     @FXML private TableColumn<Spectacle, String> colLangue;
+
+    @FXML private TextField searchField;
+    @FXML private Pagination pagination;
     private SpectacleDAO dao = new SpectacleDAO();
+    private ObservableList<Spectacle> spectacles;
 
     @FXML
     public void initialize() {
@@ -29,7 +39,9 @@ public class SpectacleListController {
         colTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
         colLieu.setCellValueFactory(new PropertyValueFactory<>("lieu"));
         colLangue.setCellValueFactory(new PropertyValueFactory<>("langue"));
-        tableSpectacles.setItems(FXCollections.observableArrayList(dao.getAll()));
+        spectacles = FXCollections.observableArrayList(dao.getAll());
+
+        TablePaginationHelper.setup(tableSpectacles, searchField, pagination, spectacles, this::filterSpectacle, 10);
     }
 
     @FXML
@@ -53,11 +65,26 @@ public class SpectacleListController {
         if (selected == null) return;
 
         dao.delete(selected.getId());
-        tableSpectacles.getItems().setAll(dao.getAll());
+        spectacles.setAll(dao.getAll());
     }
 
     @FXML
     public void back() {
         SceneSwitcher.switchTo("views/main.fxml", "Menu");
+    }
+
+    private Predicate<Spectacle> filterSpectacle(String query) {
+        if (query == null || query.isBlank()) {
+            return spectacle -> true;
+        }
+
+        return spectacle -> String.valueOf(spectacle.getId()).contains(query)
+                || containsIgnoreCase(spectacle.getTitre(), query)
+                || containsIgnoreCase(spectacle.getLieu(), query)
+                || containsIgnoreCase(spectacle.getLangue(), query);
+    }
+
+    private boolean containsIgnoreCase(String value, String query) {
+        return value != null && value.toLowerCase().contains(query);
     }
 }

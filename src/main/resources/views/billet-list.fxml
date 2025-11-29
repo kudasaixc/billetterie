@@ -9,15 +9,15 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="fr.maa.controllers.RepresentationListController">
+            fx:controller="fr.maa.controllers.BilletListController">
 
     <center>
-        <TableView fx:id="tableReps">
+        <TableView fx:id="tableBillets">
             <columns>
                 <TableColumn fx:id="colId" text="ID"/>
-                <TableColumn fx:id="colSpectacle" text="Spectacle"/>
-                <TableColumn fx:id="colDate" text="Date"/>
-                <TableColumn fx:id="colSalle" text="Salle"/>
+                <TableColumn fx:id="colNumero" text="Numéro"/>
+                <TableColumn fx:id="colIdRep" text="Représentation"/>
+                <TableColumn fx:id="colIdClient" text="Client"/>
             </columns>
         </TableView>
     </center>
@@ -27,8 +27,9 @@
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10" />
             </padding>
-            <Button text="Ajouter" onAction="#addRepresentation"/>
-            <Button text="Supprimer" onAction="#deleteRepresentation"/>
+            <Button text="Ajouter" onAction="#addBillet"/>
+            <Button text="Modifier" onAction="#editBillet"/>
+            <Button text="Supprimer" onAction="#deleteBillet"/>
             <Button text="Retour" onAction="#back"/>
         </HBox>
     </bottom>

@@ -39,6 +39,15 @@ public class RepresentationListController {
     }
 
     @FXML
+    public void deleteRepresentation() {
+        Representation selected = tableReps.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        dao.delete(selected.getId());
+        tableReps.getItems().setAll(dao.getAll());
+    }
+
+    @FXML
     public void back() {
         SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
     }

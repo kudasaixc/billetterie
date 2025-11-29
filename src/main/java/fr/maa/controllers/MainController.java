@@ -22,6 +22,6 @@ public class MainController {
 
     @FXML
     public void openBillets() {
-        SceneSwitcher.switchTo("views/billet-form.fxml", "Billets");
+        SceneSwitcher.switchTo("views/billet-list.fxml", "Billets");
     }
 }

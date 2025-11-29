@@ -14,10 +14,10 @@
     <center>
         <TableView fx:id="tableReps">
             <columns>
-                <TableColumn text="ID"/>
-                <TableColumn text="Spectacle"/>
-                <TableColumn text="Date"/>
-                <TableColumn text="Salle"/>
+                <TableColumn fx:id="colId" text="ID"/>
+                <TableColumn fx:id="colSpectacle" text="Spectacle"/>
+                <TableColumn fx:id="colDate" text="Date"/>
+                <TableColumn fx:id="colSalle" text="Salle"/>
             </columns>
         </TableView>
     </center>

@@ -1,6 +1,7 @@
 package fr.maa.dao;
 
 import fr.maa.models.Spectacle;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,8 @@ public class SpectacleDAO {
                         rs.getString("description_longue"),
                         rs.getString("langue"),
                         rs.getInt("age_minimum"),
-                        rs.getString("photos")
+                        rs.getString("photos"),
+                        rs.getString("image_path")
                 );
                 list.add(s);
             }
@@ -38,7 +40,8 @@ public class SpectacleDAO {
     }
 
     public boolean insert(Spectacle s) {
-        String sql = "INSERT INTO spectacle (titre, lieu, affiche, tags, duree, description_courte, description_longue, langue, age_minimum, photos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO spectacle (titre, lieu, affiche, tags, duree, description_courte, description_longue, langue, " +
+                "age_minimum, photos, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, s.getTitre());
@@ -51,6 +54,7 @@ public class SpectacleDAO {
             stmt.setString(8, s.getLangue());
             stmt.setInt(9, s.getAgeMinimum());
             stmt.setString(10, s.getPhotos());
+            stmt.setString(11, s.getImagePath());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
@@ -59,7 +63,8 @@ public class SpectacleDAO {
     }
 
     public boolean update(Spectacle s) {
-        String sql = "UPDATE spectacle SET titre=?, lieu=?, affiche=?, tags=?, duree=?, description_courte=?, description_longue=?, langue=?, age_minimum=?, photos=? WHERE id=?";
+        String sql = "UPDATE spectacle SET titre=?, lieu=?, affiche=?, tags=?, duree=?, description_courte=?, description_longue=?, " +
+                "langue=?, age_minimum=?, photos=?, image_path=? WHERE id=?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, s.getTitre());
@@ -72,7 +77,8 @@ public class SpectacleDAO {
             stmt.setString(8, s.getLangue());
             stmt.setInt(9, s.getAgeMinimum());
             stmt.setString(10, s.getPhotos());
-            stmt.setInt(11, s.getId());
+            stmt.setString(11, s.getImagePath());
+            stmt.setInt(12, s.getId());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }

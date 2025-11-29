@@ -33,6 +33,7 @@
         <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
             <TableView fx:id="tableSpectacles" VBox.vgrow="ALWAYS">
                 <columns>
+                    <TableColumn fx:id="colImage" text="Image" />
                     <TableColumn fx:id="colId" text="ID"/>
                     <TableColumn fx:id="colTitre" text="Titre"/>
                     <TableColumn fx:id="colLieu" text="Lieu"/>

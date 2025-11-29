@@ -22,7 +22,10 @@
     </center>
 
     <bottom>
-        <HBox spacing="10" alignment="CENTER" padding="10">
+        <HBox spacing="10" alignment="CENTER">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10" />
+            </padding>
             <Button text="Ajouter" onAction="#addSpectacle"/>
             <Button text="Supprimer" onAction="#deleteSpectacle"/>
             <Button text="Retour" onAction="#back"/>

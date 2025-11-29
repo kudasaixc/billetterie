@@ -9,7 +9,11 @@
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="fr.maa.controllers.BilletFormController"
-      spacing="10" padding="20">
+      spacing="10">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20" />
+    </padding>
 
     <children>
         <Label text="Numéro du billet"/>

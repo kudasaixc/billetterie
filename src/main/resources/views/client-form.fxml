@@ -10,7 +10,11 @@
 <GridPane xmlns="http://javafx.com/javafx/21"
           xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="fr.maa.controllers.ClientFormController"
-          hgap="10" vgap="10" padding="20">
+          hgap="10" vgap="10">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20" />
+    </padding>
 
     <!-- Champs du formulaire -->
     <children>

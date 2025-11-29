@@ -6,15 +6,20 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.*?>
+<?import java.net.URL?>
 
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="fr.maa.controllers.BilletFormController"
-      spacing="10" padding="20" styleClass="card">
+      spacing="10" styleClass="card">
 
     <stylesheets>
         <URL value="@../application.css" />
     </stylesheets>
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20" />
+    </padding>
 
     <children>
         <Label text="Numéro du billet"/>

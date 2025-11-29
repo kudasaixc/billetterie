@@ -58,11 +58,33 @@ public class SpectacleDAO {
         return false;
     }
 
+    public boolean update(Spectacle s) {
+        String sql = "UPDATE spectacle SET titre=?, lieu=?, affiche=?, tags=?, duree=?, description_courte=?, description_longue=?, langue=?, age_minimum=?, photos=? WHERE id=?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, s.getTitre());
+            stmt.setString(2, s.getLieu());
+            stmt.setString(3, s.getAffiche());
+            stmt.setString(4, s.getTags());
+            stmt.setInt(5, s.getDuree());
+            stmt.setString(6, s.getDescriptionCourte());
+            stmt.setString(7, s.getDescriptionLongue());
+            stmt.setString(8, s.getLangue());
+            stmt.setInt(9, s.getAgeMinimum());
+            stmt.setString(10, s.getPhotos());
+            stmt.setInt(11, s.getId());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+
+        return false;
+    }
+
     public boolean delete(int id) {
         try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM spectacle WHERE id=?")) {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
-       	return false;
+        return false;
     }
 }

@@ -3,6 +3,7 @@ package fr.maa.controllers;
 import fr.maa.dao.SpectacleDAO;
 import fr.maa.models.Spectacle;
 import fr.maa.utils.SceneSwitcher;
+import fr.maa.utils.SelectedSpectacle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -33,7 +34,17 @@ public class SpectacleListController {
 
     @FXML
     public void addSpectacle() {
+        SelectedSpectacle.clear();
         SceneSwitcher.switchTo("views/spectacle-form.fxml", "Nouveau spectacle");
+    }
+
+    @FXML
+    public void editSpectacle() {
+        Spectacle selected = tableSpectacles.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        SelectedSpectacle.set(selected);
+        SceneSwitcher.switchTo("views/spectacle-form.fxml", "Modifier un spectacle");
     }
 
     @FXML

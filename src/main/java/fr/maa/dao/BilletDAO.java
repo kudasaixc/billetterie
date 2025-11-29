@@ -45,4 +45,27 @@ public class BilletDAO {
 
         return false;
     }
+
+    public boolean update(Billet b) {
+        String sql = "UPDATE billet SET numero=?, id_representation=?, id_client=? WHERE id=?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, b.getNumero());
+            stmt.setInt(2, b.getIdRepresentation());
+            stmt.setInt(3, b.getIdClient());
+            stmt.setInt(4, b.getId());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+
+        return false;
+    }
+
+    public boolean delete(int id) {
+        try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM billet WHERE id=?")) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
+    }
 }

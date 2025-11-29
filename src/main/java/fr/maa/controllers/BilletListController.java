@@ -4,11 +4,17 @@ import fr.maa.dao.BilletDAO;
 import fr.maa.models.Billet;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedBillet;
+import fr.maa.utils.TablePaginationHelper;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.util.function.Predicate;
 
 public class BilletListController {
 
@@ -18,7 +24,11 @@ public class BilletListController {
     @FXML private TableColumn<Billet, Integer> colIdRep;
     @FXML private TableColumn<Billet, Integer> colIdClient;
 
+    @FXML private TextField searchField;
+    @FXML private Pagination pagination;
+
     private BilletDAO dao = new BilletDAO();
+    private ObservableList<Billet> billets;
 
     @FXML
     public void initialize() {
@@ -27,7 +37,9 @@ public class BilletListController {
         colIdRep.setCellValueFactory(new PropertyValueFactory<>("idRepresentation"));
         colIdClient.setCellValueFactory(new PropertyValueFactory<>("idClient"));
 
-        refreshTable();
+        billets = FXCollections.observableArrayList(dao.getAll());
+
+        TablePaginationHelper.setup(tableBillets, searchField, pagination, billets, this::filterBillet, 10);
     }
 
     @FXML
@@ -51,7 +63,7 @@ public class BilletListController {
         if (selected == null) return;
 
         dao.delete(selected.getId());
-        refreshTable();
+        billets.setAll(dao.getAll());
     }
 
     @FXML
@@ -59,7 +71,18 @@ public class BilletListController {
         SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
     }
 
-    private void refreshTable() {
-        tableBillets.setItems(FXCollections.observableArrayList(dao.getAll()));
+    private Predicate<Billet> filterBillet(String query) {
+        if (query == null || query.isBlank()) {
+            return billet -> true;
+        }
+
+        return billet -> String.valueOf(billet.getId()).contains(query)
+                || containsIgnoreCase(billet.getNumero(), query)
+                || String.valueOf(billet.getIdRepresentation()).contains(query)
+                || String.valueOf(billet.getIdClient()).contains(query);
+    }
+
+    private boolean containsIgnoreCase(String value, String query) {
+        return value != null && value.toLowerCase().contains(query);
     }
 }

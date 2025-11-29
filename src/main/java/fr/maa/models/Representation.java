@@ -8,6 +8,7 @@ public class Representation {
     private int idSpectacle;
     private LocalDateTime dateHeure;
     private String salle;
+    private String spectacleTitle;
 
     public Representation() {}
 
@@ -48,5 +49,13 @@ public class Representation {
 
     public void setSalle(String salle) {
         this.salle = salle;
+    }
+
+    public String getSpectacleTitle() {
+        return spectacleTitle;
+    }
+
+    public void setSpectacleTitle(String spectacleTitle) {
+        this.spectacleTitle = spectacleTitle;
     }
 }

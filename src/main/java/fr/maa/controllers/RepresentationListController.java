@@ -22,7 +22,7 @@ public class RepresentationListController {
 
     @FXML private TableColumn<Representation, Integer> colId;
 
-    @FXML private TableColumn<Representation, Integer> colSpectacle;
+    @FXML private TableColumn<Representation, String> colSpectacle;
 
     @FXML private TableColumn<Representation, LocalDateTime> colDate;
 
@@ -35,7 +35,7 @@ public class RepresentationListController {
     @FXML
     public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colSpectacle.setCellValueFactory(new PropertyValueFactory<>("idSpectacle"));
+        colSpectacle.setCellValueFactory(new PropertyValueFactory<>("spectacleTitle"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("dateHeure"));
         colSalle.setCellValueFactory(new PropertyValueFactory<>("salle"));
         representations = FXCollections.observableArrayList(dao.getAll());
@@ -68,7 +68,7 @@ public class RepresentationListController {
         }
 
         return representation -> String.valueOf(representation.getId()).contains(query)
-                || String.valueOf(representation.getIdSpectacle()).contains(query)
+                || containsIgnoreCase(representation.getSpectacleTitle(), query)
                 || containsIgnoreCase(representation.getSalle(), query)
                 || representation.getDateHeure().toString().toLowerCase().contains(query);
     }

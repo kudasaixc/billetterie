@@ -21,8 +21,8 @@ public class BilletListController {
     @FXML private TableView<Billet> tableBillets;
     @FXML private TableColumn<Billet, Integer> colId;
     @FXML private TableColumn<Billet, String> colNumero;
-    @FXML private TableColumn<Billet, Integer> colIdRep;
-    @FXML private TableColumn<Billet, Integer> colIdClient;
+    @FXML private TableColumn<Billet, String> colIdRep;
+    @FXML private TableColumn<Billet, String> colIdClient;
 
     @FXML private TextField searchField;
     @FXML private Pagination pagination;
@@ -34,8 +34,8 @@ public class BilletListController {
     public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNumero.setCellValueFactory(new PropertyValueFactory<>("numero"));
-        colIdRep.setCellValueFactory(new PropertyValueFactory<>("idRepresentation"));
-        colIdClient.setCellValueFactory(new PropertyValueFactory<>("idClient"));
+        colIdRep.setCellValueFactory(new PropertyValueFactory<>("representationLabel"));
+        colIdClient.setCellValueFactory(new PropertyValueFactory<>("clientName"));
 
         billets = FXCollections.observableArrayList(dao.getAll());
 
@@ -78,8 +78,8 @@ public class BilletListController {
 
         return billet -> String.valueOf(billet.getId()).contains(query)
                 || containsIgnoreCase(billet.getNumero(), query)
-                || String.valueOf(billet.getIdRepresentation()).contains(query)
-                || String.valueOf(billet.getIdClient()).contains(query);
+                || containsIgnoreCase(billet.getRepresentationLabel(), query)
+                || containsIgnoreCase(billet.getClientName(), query);
     }
 
     private boolean containsIgnoreCase(String value, String query) {

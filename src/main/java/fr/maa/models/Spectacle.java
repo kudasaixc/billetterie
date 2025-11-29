@@ -13,12 +13,13 @@ public class Spectacle {
     private String langue;
     private int ageMinimum;
     private String photos;
+    private String imagePath;
 
     public Spectacle() {}
 
     public Spectacle(int id, String titre, String lieu, String affiche, String tags, int duree,
                      String descriptionCourte, String descriptionLongue, String langue,
-                     int ageMinimum, String photos) {
+                     int ageMinimum, String photos, String imagePath) {
 
         this.id = id;
         this.titre = titre;
@@ -31,6 +32,7 @@ public class Spectacle {
         this.langue = langue;
         this.ageMinimum = ageMinimum;
         this.photos = photos;
+        this.imagePath = imagePath;
     }
 
     // GETTERS & SETTERS
@@ -67,4 +69,7 @@ public class Spectacle {
 
     public String getPhotos() { return photos; }
     public void setPhotos(String photos) { this.photos = photos; }
+
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 }

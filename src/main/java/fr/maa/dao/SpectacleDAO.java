@@ -1,6 +1,7 @@
 package fr.maa.dao;
 
 import fr.maa.models.Spectacle;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +9,22 @@ import java.util.List;
 public class SpectacleDAO {
 
     private final Connection conn = Database.getConnection();
+    private final boolean hasImagePathColumn = checkColumnExists("spectacle", "image_path");
+
+    private boolean checkColumnExists(String tableName, String columnName) {
+        try (ResultSet rs = conn.getMetaData().getColumns(null, null, tableName, columnName)) {
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public List<Spectacle> getAll() {
         List<Spectacle> list = new ArrayList<>();
-        String sql = "SELECT * FROM spectacle";
+        String sql = hasImagePathColumn
+                ? "SELECT * FROM spectacle"
+                : "SELECT id, titre, lieu, affiche, tags, duree, description_courte, description_longue, langue, age_minimum, photos FROM spectacle";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -28,7 +41,8 @@ public class SpectacleDAO {
                         rs.getString("description_longue"),
                         rs.getString("langue"),
                         rs.getInt("age_minimum"),
-                        rs.getString("photos")
+                        rs.getString("photos"),
+                        hasImagePathColumn ? rs.getString("image_path") : null
                 );
                 list.add(s);
             }
@@ -38,7 +52,9 @@ public class SpectacleDAO {
     }
 
     public boolean insert(Spectacle s) {
-        String sql = "INSERT INTO spectacle (titre, lieu, affiche, tags, duree, description_courte, description_longue, langue, age_minimum, photos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = hasImagePathColumn
+                ? "INSERT INTO spectacle (titre, lieu, affiche, tags, duree, description_courte, description_longue, langue, age_minimum, photos, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                : "INSERT INTO spectacle (titre, lieu, affiche, tags, duree, description_courte, description_longue, langue, age_minimum, photos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, s.getTitre());
@@ -51,6 +67,9 @@ public class SpectacleDAO {
             stmt.setString(8, s.getLangue());
             stmt.setInt(9, s.getAgeMinimum());
             stmt.setString(10, s.getPhotos());
+            if (hasImagePathColumn) {
+                stmt.setString(11, s.getImagePath());
+            }
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
@@ -59,7 +78,9 @@ public class SpectacleDAO {
     }
 
     public boolean update(Spectacle s) {
-        String sql = "UPDATE spectacle SET titre=?, lieu=?, affiche=?, tags=?, duree=?, description_courte=?, description_longue=?, langue=?, age_minimum=?, photos=? WHERE id=?";
+        String sql = hasImagePathColumn
+                ? "UPDATE spectacle SET titre=?, lieu=?, affiche=?, tags=?, duree=?, description_courte=?, description_longue=?, langue=?, age_minimum=?, photos=?, image_path=? WHERE id=?"
+                : "UPDATE spectacle SET titre=?, lieu=?, affiche=?, tags=?, duree=?, description_courte=?, description_longue=?, langue=?, age_minimum=?, photos=? WHERE id=?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, s.getTitre());
@@ -72,7 +93,12 @@ public class SpectacleDAO {
             stmt.setString(8, s.getLangue());
             stmt.setInt(9, s.getAgeMinimum());
             stmt.setString(10, s.getPhotos());
-            stmt.setInt(11, s.getId());
+            if (hasImagePathColumn) {
+                stmt.setString(11, s.getImagePath());
+                stmt.setInt(12, s.getId());
+            } else {
+                stmt.setInt(11, s.getId());
+            }
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }

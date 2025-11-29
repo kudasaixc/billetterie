@@ -8,12 +8,18 @@ import fr.maa.utils.TablePaginationHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Predicate;
 
 public class SpectacleListController {
@@ -28,6 +34,8 @@ public class SpectacleListController {
 
     @FXML private TableColumn<Spectacle, String> colLangue;
 
+    @FXML private TableColumn<Spectacle, String> colImage;
+
     @FXML private TextField searchField;
     @FXML private Pagination pagination;
     private SpectacleDAO dao = new SpectacleDAO();
@@ -39,6 +47,7 @@ public class SpectacleListController {
         colTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
         colLieu.setCellValueFactory(new PropertyValueFactory<>("lieu"));
         colLangue.setCellValueFactory(new PropertyValueFactory<>("langue"));
+        setupImageColumn();
         spectacles = FXCollections.observableArrayList(dao.getAll());
 
         TablePaginationHelper.setup(tableSpectacles, searchField, pagination, spectacles, this::filterSpectacle, 10);
@@ -86,5 +95,45 @@ public class SpectacleListController {
 
     private boolean containsIgnoreCase(String value, String query) {
         return value != null && value.toLowerCase().contains(query);
+    }
+
+    private void setupImageColumn() {
+        colImage.setCellValueFactory(new PropertyValueFactory<>("imagePath"));
+        colImage.setCellFactory(column -> new TableCell<>() {
+            private final ImageView imageView = new ImageView();
+
+            {
+                imageView.setFitWidth(50);
+                imageView.setFitHeight(50);
+                imageView.setPreserveRatio(true);
+            }
+
+            @Override
+            protected void updateItem(String path, boolean empty) {
+                super.updateItem(path, empty);
+                if (empty) {
+                    setGraphic(null);
+                    return;
+                }
+
+                Image image = loadImage(path);
+                imageView.setImage(image);
+                setGraphic(imageView);
+            }
+        });
+    }
+
+    private Image loadImage(String imagePath) {
+        if (imagePath == null || imagePath.isBlank()) {
+            return null;
+        }
+
+        Path diskPath = Path.of("src/main/resources").resolve(imagePath);
+        if (Files.exists(diskPath)) {
+            return new Image(diskPath.toUri().toString());
+        }
+
+        URL resource = getClass().getResource("/" + imagePath);
+        return resource != null ? new Image(resource.toExternalForm()) : null;
     }
 }

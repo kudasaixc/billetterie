@@ -1,6 +1,7 @@
 package fr.maa.dao;
 
 import fr.maa.models.Client;
+import fr.maa.utils.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class ClientDAO {
             stmt.setString(3, c.getPrenom());
             stmt.setString(4, c.getNumero());
             stmt.setString(5, c.getEmail());
-            stmt.setString(6, c.getPassword());
+            stmt.setString(6, hashPassword(c.getPassword()));
             stmt.setString(7, c.getAdresse());
             stmt.setBoolean(8, c.isAdmin());
 
@@ -87,7 +88,7 @@ public class ClientDAO {
             stmt.setString(3, c.getPrenom());
             stmt.setString(4, c.getNumero());
             stmt.setString(5, c.getEmail());
-            stmt.setString(6, c.getPassword());
+            stmt.setString(6, hashPassword(c.getPassword()));
             stmt.setString(7, c.getAdresse());
             stmt.setBoolean(8, c.isAdmin());
             stmt.setInt(9, c.getId());
@@ -105,5 +106,63 @@ public class ClientDAO {
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
         return false;
+    }
+
+    public Client login(String email, String password) {
+        String sql = "SELECT * FROM client WHERE email = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String hashed = rs.getString("password");
+                if (hashed != null && BCrypt.checkpw(password, hashed)) {
+                    return new Client(
+                            rs.getInt("id"),
+                            rs.getString("pseudo"),
+                            rs.getString("nom"),
+                            rs.getString("prenom"),
+                            rs.getString("numero"),
+                            rs.getString("email"),
+                            hashed,
+                            rs.getString("adresse"),
+                            rs.getBoolean("is_admin")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean emailExists(String email) {
+        String sql = "SELECT COUNT(*) FROM client WHERE email = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean register(Client c) {
+        if (c == null || c.getPassword() == null) {
+            return false;
+        }
+        return insert(c);
+    }
+
+    private String hashPassword(String password) {
+        if (password == null || password.isBlank()) {
+            return password;
+        }
+        if (password.startsWith("$2a$") || password.startsWith("$2b$")) {
+            return password;
+        }
+        return BCrypt.hashPassword(password);
     }
 }

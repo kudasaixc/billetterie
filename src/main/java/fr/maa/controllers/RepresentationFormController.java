@@ -3,6 +3,7 @@ package fr.maa.controllers;
 import fr.maa.dao.RepresentationDAO;
 import fr.maa.models.Representation;
 import fr.maa.utils.SceneSwitcher;
+import fr.maa.utils.Session;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
@@ -21,6 +22,10 @@ public class RepresentationFormController {
 
     @FXML
     public void save() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         try {
             int spectacleId = Integer.parseInt(fieldIdSpectacle.getText());
             LocalDateTime date = LocalDateTime.parse(fieldDateHeure.getText());
@@ -52,6 +57,10 @@ public class RepresentationFormController {
 
     @FXML
     public void cancel() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         SceneSwitcher.switchTo("views/representation-list.fxml", "Représentations");
     }
 }

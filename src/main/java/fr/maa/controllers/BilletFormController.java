@@ -11,6 +11,7 @@ import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedClient;
 import fr.maa.utils.SelectedRepresentation;
 import fr.maa.utils.SelectedSpectacle;
+import fr.maa.utils.Session;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -43,6 +44,10 @@ public class BilletFormController {
 
     @FXML
     public void initialize() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         selectedClient = SelectedClient.get();
         selectedSpectacle = SelectedSpectacle.get();
         selectedRepresentation = SelectedRepresentation.get();

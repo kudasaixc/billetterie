@@ -4,9 +4,11 @@ import fr.maa.dao.ClientDAO;
 import fr.maa.models.Client;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedClient;
+import fr.maa.utils.Session;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
 
 public class ClientFormController {
 
@@ -24,6 +26,10 @@ public class ClientFormController {
 
     @FXML
     public void initialize() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         editing = SelectedClient.get();
         if (editing != null) {
             fieldPseudo.setText(editing.getPseudo());
@@ -31,7 +37,6 @@ public class ClientFormController {
             fieldPrenom.setText(editing.getPrenom());
             fieldNumero.setText(editing.getNumero());
             fieldEmail.setText(editing.getEmail());
-            fieldPassword.setText(editing.getPassword());
             fieldAdresse.setText(editing.getAdresse());
             checkAdmin.setSelected(editing.isAdmin());
         }
@@ -39,6 +44,14 @@ public class ClientFormController {
 
     @FXML
     public void save() {
+
+        if (editing == null && (fieldPassword.getText() == null || fieldPassword.getText().isBlank())) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(null);
+            alert.setContentText("Le mot de passe ne peut pas être vide.");
+            alert.showAndWait();
+            return;
+        }
 
         if (editing == null) {
             Client c = new Client(
@@ -59,7 +72,9 @@ public class ClientFormController {
             editing.setPrenom(fieldPrenom.getText());
             editing.setNumero(fieldNumero.getText());
             editing.setEmail(fieldEmail.getText());
-            editing.setPassword(fieldPassword.getText());
+            if (!fieldPassword.getText().isBlank()) {
+                editing.setPassword(fieldPassword.getText());
+            }
             editing.setAdresse(fieldAdresse.getText());
             editing.setAdmin(checkAdmin.isSelected());
 

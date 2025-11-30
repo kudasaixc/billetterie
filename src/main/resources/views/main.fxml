@@ -20,10 +20,12 @@
     </padding>
 
     <children>
-        <Label text="Tableau de bord" styleClass="h1" />
+        <Label text="Menu principal" styleClass="h1" />
+
+        <Label text="Sélectionnez une section" styleClass="h2" />
 
         <VBox styleClass="card" spacing="12">
-            <Button text="Dashboard" onAction="#openDashboard"/>
+            <Button text="Tableau de bord" onAction="#openDashboard"/>
             <Button text="Gestion des Clients" onAction="#openClients"/>
             <Button text="Gestion des Spectacles" onAction="#openSpectacles"/>
             <Button text="Gestion des Représentations" onAction="#openRepresentations"/>

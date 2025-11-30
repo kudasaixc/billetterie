@@ -5,6 +5,7 @@ import fr.maa.dao.RepresentationDAO;
 import fr.maa.models.Billet;
 import fr.maa.models.Representation;
 import fr.maa.models.Spectacle;
+import fr.maa.services.BilletPDFService;
 import fr.maa.utils.PurchaseContext;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.Session;
@@ -14,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PaymentController {
 
@@ -34,6 +37,7 @@ public class PaymentController {
 
     private final BilletDAO billetDAO = new BilletDAO();
     private final RepresentationDAO representationDAO = new RepresentationDAO();
+    private final BilletPDFService billetPDFService = new BilletPDFService();
 
     @FXML
     public void initialize() {
@@ -77,6 +81,8 @@ public class PaymentController {
             return;
         }
 
+        List<Billet> createdBillets = new ArrayList<>();
+
         for (int i = 0; i < quantity; i++) {
             Billet billet = new Billet();
             billet.setNumero(billetDAO.generateNumero());
@@ -89,7 +95,16 @@ public class PaymentController {
                 confirmButton.setDisable(false);
                 return;
             }
+            createdBillets.add(billet);
         }
+
+        billetPDFService.generateBillets(
+                createdBillets,
+                Session.getUser(),
+                spectacle,
+                representation,
+                confirmButton.getScene() == null ? null : confirmButton.getScene().getWindow()
+        );
 
         PurchaseContext.clear();
         SceneSwitcher.switchTo("views/billet-list.fxml", "Mes billets");

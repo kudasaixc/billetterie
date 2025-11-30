@@ -4,6 +4,7 @@ import fr.maa.dao.SpectacleDAO;
 import fr.maa.models.Spectacle;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedSpectacle;
+import fr.maa.utils.Session;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -41,6 +42,10 @@ public class SpectacleFormController {
 
     @FXML
     public void initialize() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         editing = SelectedSpectacle.get();
         if (editing != null) {
             fieldTitre.setText(editing.getTitre());

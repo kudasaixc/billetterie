@@ -5,6 +5,7 @@ import fr.maa.models.Client;
 import fr.maa.utils.TablePaginationHelper;
 import fr.maa.utils.SelectedClient;
 import fr.maa.utils.SceneSwitcher;
+import fr.maa.utils.Session;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -47,6 +48,10 @@ public class ClientListController {
 
     @FXML
     public void initialize() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colPseudo.setCellValueFactory(new PropertyValueFactory<>("pseudo"));
         colNom.setCellValueFactory(new PropertyValueFactory<>("nom"));

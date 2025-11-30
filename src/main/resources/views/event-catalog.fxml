@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="fr.maa.controllers.EventCatalogController"
+      spacing="12" alignment="TOP_CENTER" prefWidth="680" prefHeight="520">
+
+    <stylesheets>
+        <URL value="@../application.css" />
+    </stylesheets>
+
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24" />
+    </padding>
+
+    <children>
+        <Label text="Tous les évènements" styleClass="h1" />
+        <Label text="Sélectionnez un spectacle pour l'acheter" styleClass="muted" />
+        <ListView fx:id="spectacleListView" VBox.vgrow="ALWAYS" prefHeight="420" />
+        <Button text="Retour" onAction="#back" />
+    </children>
+</VBox>

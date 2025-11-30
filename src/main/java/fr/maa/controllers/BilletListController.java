@@ -3,6 +3,7 @@ package fr.maa.controllers;
 import fr.maa.dao.BilletDAO;
 import fr.maa.models.Billet;
 import fr.maa.utils.SceneSwitcher;
+import fr.maa.utils.Session;
 import fr.maa.utils.TablePaginationHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Button;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +27,7 @@ public class BilletListController {
     @FXML private TableColumn<Billet, String> colClient;
     @FXML private TableColumn<Billet, String> colDate;
     @FXML private TableColumn<Billet, Double> colPrix;
+    @FXML private Button addButton;
 
     @FXML private TextField searchField;
     @FXML private Pagination pagination;
@@ -35,6 +38,11 @@ public class BilletListController {
 
     @FXML
     public void initialize() {
+        if (!Session.isLoggedIn()) {
+            SceneSwitcher.switchTo("views/login.fxml", "Connexion");
+            return;
+        }
+
         colNumero.setCellValueFactory(new PropertyValueFactory<>("numero"));
         colSpectacle.setCellValueFactory(new PropertyValueFactory<>("spectacleTitle"));
         colClient.setCellValueFactory(new PropertyValueFactory<>("clientName"));
@@ -42,7 +50,13 @@ public class BilletListController {
                 formatDate(cell.getValue().getDateAchat())));
         colPrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
 
-        billets = FXCollections.observableArrayList(dao.getAll());
+        if (Session.isAdmin()) {
+            billets = FXCollections.observableArrayList(dao.getAll());
+        } else {
+            billets = FXCollections.observableArrayList(dao.getAllByClient(Session.getUser().getId()));
+            addButton.setVisible(false);
+            addButton.setManaged(false);
+        }
 
         TablePaginationHelper.setup(tableBillets, searchField, pagination, billets, this::filterBillet, 10);
     }

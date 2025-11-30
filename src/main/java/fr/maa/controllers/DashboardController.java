@@ -6,6 +6,7 @@ import fr.maa.dao.SpectacleDAO;
 import fr.maa.models.SpectacleStat;
 import fr.maa.models.VenteParJour;
 import fr.maa.utils.SceneSwitcher;
+import fr.maa.utils.Session;
 import javafx.fxml.FXML;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
@@ -42,6 +43,10 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         loadKpis();
         loadTopSpectaclesCharts();
         loadVentesLineChart();

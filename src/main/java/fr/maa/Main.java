@@ -10,7 +10,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         SceneSwitcher.setStage(stage);
-        SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+        SceneSwitcher.switchTo("views/login.fxml", "Connexion");
     }
 
     public static void main(String[] args) {

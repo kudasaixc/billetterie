@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fr.maa.controllers.DashboardController">
+    <top>
+        <VBox spacing="8" alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+            <stylesheets>
+                <URL value="@../application.css" />
+            </stylesheets>
+            <padding>
+                <Insets top="16" right="16" bottom="0" left="16" />
+            </padding>
+            <children>
+                <Label text="Dashboard" styleClass="h1" />
+                <Label text="Vue d'ensemble des ventes et représentations" styleClass="muted" />
+            </children>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="16">
+            <padding>
+                <Insets top="8" right="16" bottom="16" left="16" />
+            </padding>
+            <children>
+                <HBox spacing="16">
+                    <VBox styleClass="card" spacing="4" alignment="CENTER">
+                        <Label text="Spectacles" styleClass="muted" />
+                        <Label fx:id="totalSpectaclesLabel" styleClass="h1" />
+                    </VBox>
+                    <VBox styleClass="card" spacing="4" alignment="CENTER">
+                        <Label text="Représentations" styleClass="muted" />
+                        <Label fx:id="totalRepresentationsLabel" styleClass="h1" />
+                    </VBox>
+                    <VBox styleClass="card" spacing="4" alignment="CENTER">
+                        <Label text="Billets vendus" styleClass="muted" />
+                        <Label fx:id="totalBilletsLabel" styleClass="h1" />
+                    </VBox>
+                    <VBox styleClass="card" spacing="4" alignment="CENTER">
+                        <Label text="Chiffre d'affaires" styleClass="muted" />
+                        <Label fx:id="chiffreAffairesLabel" styleClass="h1" />
+                    </VBox>
+                </HBox>
+
+                <GridPane hgap="16" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50" />
+                        <ColumnConstraints percentWidth="50" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="320" />
+                        <RowConstraints minHeight="320" />
+                    </rowConstraints>
+                    <children>
+                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Top 5 Spectacles (billets)" styleClass="h2" />
+                            <PieChart fx:id="ventesPieChart" prefHeight="300" />
+                        </VBox>
+                        <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Chiffre d'affaires par spectacle" styleClass="h2" />
+                            <BarChart fx:id="caBarChart" prefHeight="300">
+                                <xAxis>
+                                    <CategoryAxis label="Spectacle" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="CA (€)" />
+                                </yAxis>
+                            </BarChart>
+                        </VBox>
+                        <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Ventes par jour" styleClass="h2" />
+                            <LineChart fx:id="ventesLineChart" prefHeight="300">
+                                <xAxis>
+                                    <CategoryAxis label="Date" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Billets vendus" />
+                                </yAxis>
+                            </LineChart>
+                        </VBox>
+                        <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Label text="Taux de remplissage" styleClass="h2" />
+                            <AreaChart fx:id="remplissageAreaChart" prefHeight="300">
+                                <xAxis>
+                                    <CategoryAxis label="Représentation" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="% de remplissage" />
+                                </yAxis>
+                            </AreaChart>
+                        </VBox>
+                    </children>
+                </GridPane>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

@@ -6,6 +6,7 @@ import fr.maa.models.Billet;
 import fr.maa.models.Client;
 import fr.maa.models.Representation;
 import fr.maa.models.Spectacle;
+import fr.maa.services.BilletPDFService;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedClient;
 import fr.maa.utils.SelectedRepresentation;
@@ -21,6 +22,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BilletFormController {
 
@@ -32,6 +35,7 @@ public class BilletFormController {
 
     private final BilletDAO billetDAO = new BilletDAO();
     private final RepresentationDAO representationDAO = new RepresentationDAO();
+    private final BilletPDFService billetPDFService = new BilletPDFService();
 
     private Client selectedClient;
     private Spectacle selectedSpectacle;
@@ -118,6 +122,7 @@ public class BilletFormController {
         }
 
         boolean insertedAll = true;
+        List<Billet> generatedBillets = new ArrayList<>();
         for (int i = 0; i < quantite; i++) {
             String numero = billetDAO.generateNumero();
             Billet billet = new Billet(0, numero, selectedRepresentation.getId(), selectedClient.getId(), prix, LocalDateTime.now());
@@ -125,6 +130,10 @@ public class BilletFormController {
                 insertedAll = false;
                 break;
             }
+            billet.setClientName(selectedClient.getPrenom() + " " + selectedClient.getNom());
+            billet.setSpectacleTitle(selectedSpectacle.getTitre());
+            billet.setRepresentationLabel(formatRepresentationLabel(selectedRepresentation));
+            generatedBillets.add(billet);
         }
 
         boolean decremented = insertedAll && representationDAO.decrementPlaces(selectedRepresentation.getId(), quantite);
@@ -133,6 +142,7 @@ public class BilletFormController {
         }
 
         if (insertedAll && decremented) {
+            billetPDFService.generateBillets(generatedBillets, selectedClient, selectedSpectacle, selectedRepresentation, clientField.getScene() == null ? null : clientField.getScene().getWindow());
             showAlert(Alert.AlertType.INFORMATION, "Billets créés", quantite + " billet(s) ont été générés avec succès.");
             clearSelections();
             SceneSwitcher.switchTo("views/billet-list.fxml", "Billets");
@@ -157,6 +167,10 @@ public class BilletFormController {
     private String formatRepresentation(Representation representation) {
         return representation.getDateHeure().toString() + " - " + representation.getSalle() +
                 " (" + representation.getPlacesDisponibles() + " places, " + String.format("%.2f€", representation.getPrix()) + ")";
+    }
+
+    private String formatRepresentationLabel(Representation representation) {
+        return representation.getDateHeure().toString() + " - " + representation.getSalle();
     }
 
     private void openModal(String resource, String title, Runnable afterClose) {

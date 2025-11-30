@@ -23,14 +23,16 @@
     </stylesheets>
 
     <top>
-        <HBox spacing="12" alignment="CENTER_LEFT" padding="12">
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
             <Button text="Retour" onAction="#back" />
             <Label fx:id="titleLabel" styleClass="h1" />
         </HBox>
     </top>
 
     <center>
-        <HBox spacing="16" padding="24">
+        <HBox spacing="16">
+            <padding><Insets top="24" right="24" bottom="24" left="24" /></padding>
             <StackPane fx:id="imageContainer" prefWidth="280" prefHeight="360"
                        style="-fx-background-color: #f3f4f6; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8;">
                 <ImageView fx:id="spectacleImage" fitWidth="260" fitHeight="340" preserveRatio="true" />

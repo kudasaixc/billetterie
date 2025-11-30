@@ -25,11 +25,13 @@
         <Label text="Sélectionnez une section" styleClass="h2" />
 
         <VBox styleClass="card" spacing="12">
-            <Button text="Tableau de bord" onAction="#openDashboard"/>
-            <Button text="Gestion des Clients" onAction="#openClients"/>
-            <Button text="Gestion des Spectacles" onAction="#openSpectacles"/>
-            <Button text="Gestion des Représentations" onAction="#openRepresentations"/>
+            <Label fx:id="welcomeLabel" text="Connecté" />
+            <Button fx:id="dashboardButton" text="Tableau de bord" onAction="#openDashboard"/>
+            <Button fx:id="clientsButton" text="Gestion des Clients" onAction="#openClients"/>
+            <Button fx:id="spectaclesButton" text="Gestion des Spectacles" onAction="#openSpectacles"/>
+            <Button fx:id="representationsButton" text="Gestion des Représentations" onAction="#openRepresentations"/>
             <Button text="Billetterie" onAction="#openBillets"/>
+            <Button text="Se déconnecter" style="-fx-background-color: #DC2626;" onAction="#logout"/>
         </VBox>
     </children>
 </VBox>

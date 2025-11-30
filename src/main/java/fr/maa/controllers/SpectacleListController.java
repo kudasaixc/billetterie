@@ -5,6 +5,7 @@ import fr.maa.models.Spectacle;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedSpectacle;
 import fr.maa.utils.TablePaginationHelper;
+import fr.maa.utils.Session;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -43,6 +44,10 @@ public class SpectacleListController {
 
     @FXML
     public void initialize() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
         colLieu.setCellValueFactory(new PropertyValueFactory<>("lieu"));

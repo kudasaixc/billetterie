@@ -45,7 +45,7 @@
         </VBox>
 
         <HBox styleClass="actions-bar">
-            <Button text="+ Nouveau billet" onAction="#addBillet"/>
+            <Button fx:id="addButton" text="+ Nouveau billet" onAction="#addBillet"/>
             <Button text="Retour" onAction="#back"/>
         </HBox>
     </children>

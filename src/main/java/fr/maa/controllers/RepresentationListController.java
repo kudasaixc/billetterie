@@ -4,6 +4,7 @@ import fr.maa.dao.RepresentationDAO;
 import fr.maa.models.Representation;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.TablePaginationHelper;
+import fr.maa.utils.Session;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -36,6 +37,10 @@ public class RepresentationListController {
 
     @FXML
     public void initialize() {
+        if (!Session.isAdmin()) {
+            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            return;
+        }
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colSpectacle.setCellValueFactory(new PropertyValueFactory<>("spectacleTitle"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("dateHeure"));

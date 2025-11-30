@@ -53,6 +53,11 @@ public class MainController {
     }
 
     @FXML
+    public void openCatalog() {
+        SceneSwitcher.switchTo("views/event-catalog.fxml", "Événements");
+    }
+
+    @FXML
     public void openBillets() {
         SceneSwitcher.switchTo("views/billet-list.fxml", "Billets");
     }

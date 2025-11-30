@@ -26,6 +26,7 @@
 
         <VBox styleClass="card" spacing="12">
             <Label fx:id="welcomeLabel" text="Connecté" />
+            <Button text="Tous les évènements" onAction="#openCatalog"/>
             <Button fx:id="dashboardButton" text="Tableau de bord" onAction="#openDashboard"/>
             <Button fx:id="clientsButton" text="Gestion des Clients" onAction="#openClients"/>
             <Button fx:id="spectaclesButton" text="Gestion des Spectacles" onAction="#openSpectacles"/>

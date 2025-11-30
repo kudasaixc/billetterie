@@ -1,6 +1,7 @@
 package fr.maa.dao;
 
 import fr.maa.models.Spectacle;
+import fr.maa.models.SpectacleStat;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -112,5 +113,44 @@ public class SpectacleDAO {
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
         return false;
+    }
+
+    public int getTotalSpectacles() {
+        String sql = "SELECT COUNT(*) AS total FROM spectacle";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<SpectacleStat> getTopSpectacles() {
+        List<SpectacleStat> stats = new ArrayList<>();
+        String sql = "SELECT s.titre, COUNT(b.id) AS billets_vendus, COALESCE(SUM(b.prix), 0) AS chiffre_affaires " +
+                "FROM spectacle s " +
+                "JOIN representation r ON r.id_spectacle = s.id " +
+                "LEFT JOIN billet b ON b.id_representation = r.id " +
+                "GROUP BY s.id, s.titre " +
+                "ORDER BY billets_vendus DESC " +
+                "LIMIT 5";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                stats.add(new SpectacleStat(
+                        rs.getString("titre"),
+                        rs.getInt("billets_vendus"),
+                        rs.getDouble("chiffre_affaires")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return stats;
     }
 }

@@ -23,6 +23,7 @@
         <Label text="Tableau de bord" styleClass="h1" />
 
         <VBox styleClass="card" spacing="12">
+            <Button text="Dashboard" onAction="#openDashboard"/>
             <Button text="Gestion des Clients" onAction="#openClients"/>
             <Button text="Gestion des Spectacles" onAction="#openSpectacles"/>
             <Button text="Gestion des Représentations" onAction="#openRepresentations"/>

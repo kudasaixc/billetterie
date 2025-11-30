@@ -110,6 +110,44 @@ public class RepresentationDAO {
         return false;
     }
 
+    public double getTauxRemplissage(int representationId) {
+        String sql = "SELECT r.places_disponibles, COALESCE(COUNT(b.id), 0) AS billets_vendus " +
+                "FROM representation r " +
+                "LEFT JOIN billet b ON b.id_representation = r.id " +
+                "WHERE r.id = ? " +
+                "GROUP BY r.places_disponibles";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, representationId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int billetsVendus = rs.getInt("billets_vendus");
+                int placesDisponibles = rs.getInt("places_disponibles");
+                int capacite = billetsVendus + placesDisponibles;
+                if (capacite == 0) {
+                    return 0;
+                }
+                return (double) billetsVendus / capacite;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getTotalRepresentations() {
+        String sql = "SELECT COUNT(*) AS total FROM representation";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public boolean delete(int id) {
         try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM representation WHERE id=?")) {
             stmt.setInt(1, id);

@@ -33,10 +33,11 @@
         <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
             <TableView fx:id="tableBillets" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" text="ID"/>
                     <TableColumn fx:id="colNumero" text="Numéro"/>
-                    <TableColumn fx:id="colIdRep" text="Représentation"/>
-                    <TableColumn fx:id="colIdClient" text="Client"/>
+                    <TableColumn fx:id="colSpectacle" text="Spectacle"/>
+                    <TableColumn fx:id="colClient" text="Client"/>
+                    <TableColumn fx:id="colDate" text="Date d'achat"/>
+                    <TableColumn fx:id="colPrix" text="Prix"/>
                 </columns>
             </TableView>
 
@@ -44,9 +45,7 @@
         </VBox>
 
         <HBox styleClass="actions-bar">
-            <Button text="Ajouter" onAction="#addBillet"/>
-            <Button text="Modifier" onAction="#editBillet"/>
-            <Button text="Supprimer" onAction="#deleteBillet"/>
+            <Button text="+ Nouveau billet" onAction="#addBillet"/>
             <Button text="Retour" onAction="#back"/>
         </HBox>
     </children>

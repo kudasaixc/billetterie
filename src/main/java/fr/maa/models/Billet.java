@@ -1,21 +1,28 @@
 package fr.maa.models;
 
+import java.time.LocalDateTime;
+
 public class Billet {
 
     private int id;
     private String numero;
     private int idRepresentation;
     private int idClient;
+    private double prix;
+    private LocalDateTime dateAchat;
     private String representationLabel;
+    private String spectacleTitle;
     private String clientName;
 
     public Billet() {}
 
-    public Billet(int id, String numero, int idRepresentation, int idClient) {
+    public Billet(int id, String numero, int idRepresentation, int idClient, double prix, LocalDateTime dateAchat) {
         this.id = id;
         this.numero = numero;
         this.idRepresentation = idRepresentation;
         this.idClient = idClient;
+        this.prix = prix;
+        this.dateAchat = dateAchat;
     }
 
     public int getId() {
@@ -50,12 +57,36 @@ public class Billet {
         this.idClient = idClient;
     }
 
+    public double getPrix() {
+        return prix;
+    }
+
+    public void setPrix(double prix) {
+        this.prix = prix;
+    }
+
+    public LocalDateTime getDateAchat() {
+        return dateAchat;
+    }
+
+    public void setDateAchat(LocalDateTime dateAchat) {
+        this.dateAchat = dateAchat;
+    }
+
     public String getRepresentationLabel() {
         return representationLabel;
     }
 
     public void setRepresentationLabel(String representationLabel) {
         this.representationLabel = representationLabel;
+    }
+
+    public String getSpectacleTitle() {
+        return spectacleTitle;
+    }
+
+    public void setSpectacleTitle(String spectacleTitle) {
+        this.spectacleTitle = spectacleTitle;
     }
 
     public String getClientName() {

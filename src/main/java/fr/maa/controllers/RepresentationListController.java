@@ -27,6 +27,8 @@ public class RepresentationListController {
     @FXML private TableColumn<Representation, LocalDateTime> colDate;
 
     @FXML private TableColumn<Representation, String> colSalle;
+    @FXML private TableColumn<Representation, Integer> colPlaces;
+    @FXML private TableColumn<Representation, Double> colPrix;
     @FXML private TextField searchField;
     @FXML private Pagination pagination;
     private RepresentationDAO dao = new RepresentationDAO();
@@ -38,6 +40,8 @@ public class RepresentationListController {
         colSpectacle.setCellValueFactory(new PropertyValueFactory<>("spectacleTitle"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("dateHeure"));
         colSalle.setCellValueFactory(new PropertyValueFactory<>("salle"));
+        colPlaces.setCellValueFactory(new PropertyValueFactory<>("placesDisponibles"));
+        colPrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
         representations = FXCollections.observableArrayList(dao.getAll());
 
         TablePaginationHelper.setup(tableReps, searchField, pagination, representations, this::filterRepresentation, 10);
@@ -70,7 +74,9 @@ public class RepresentationListController {
         return representation -> String.valueOf(representation.getId()).contains(query)
                 || containsIgnoreCase(representation.getSpectacleTitle(), query)
                 || containsIgnoreCase(representation.getSalle(), query)
-                || representation.getDateHeure().toString().toLowerCase().contains(query);
+                || representation.getDateHeure().toString().toLowerCase().contains(query)
+                || String.valueOf(representation.getPlacesDisponibles()).contains(query)
+                || String.valueOf(representation.getPrix()).contains(query);
     }
 
     private boolean containsIgnoreCase(String value, String query) {

@@ -23,7 +23,8 @@ public class RepresentationDAO {
                         rs.getInt("id_spectacle"),
                         rs.getTimestamp("date_heure").toLocalDateTime(),
                         rs.getString("salle"),
-                        rs.getInt("places_disponibles")
+                        rs.getInt("places_disponibles"),
+                        rs.getDouble("prix")
                 );
                 r.setSpectacleTitle(rs.getString("spectacle_title"));
                 list.add(r);
@@ -48,7 +49,8 @@ public class RepresentationDAO {
                         rs.getInt("id_spectacle"),
                         rs.getTimestamp("date_heure").toLocalDateTime(),
                         rs.getString("salle"),
-                        rs.getInt("places_disponibles")
+                        rs.getInt("places_disponibles"),
+                        rs.getDouble("prix")
                 );
                 r.setSpectacleTitle(rs.getString("spectacle_title"));
                 list.add(r);
@@ -70,7 +72,8 @@ public class RepresentationDAO {
                         rs.getInt("id_spectacle"),
                         rs.getTimestamp("date_heure").toLocalDateTime(),
                         rs.getString("salle"),
-                        rs.getInt("places_disponibles")
+                        rs.getInt("places_disponibles"),
+                        rs.getDouble("prix")
                 );
                 r.setSpectacleTitle(rs.getString("spectacle_title"));
                 return r;
@@ -80,13 +83,14 @@ public class RepresentationDAO {
     }
 
     public boolean insert(Representation r) {
-        String sql = "INSERT INTO representation (id_spectacle, date_heure, salle, places_disponibles) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO representation (id_spectacle, date_heure, salle, places_disponibles, prix) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, r.getIdSpectacle());
             stmt.setTimestamp(2, Timestamp.valueOf(r.getDateHeure()));
             stmt.setString(3, r.getSalle());
             stmt.setInt(4, r.getPlacesDisponibles());
+            stmt.setDouble(5, r.getPrix());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
@@ -94,11 +98,13 @@ public class RepresentationDAO {
         return false;
     }
 
-    public boolean decrementPlaces(int id) {
-        String sql = "UPDATE representation SET places_disponibles = places_disponibles - 1 " +
-                "WHERE id = ? AND places_disponibles > 0";
+    public boolean decrementPlaces(int id, int quantity) {
+        String sql = "UPDATE representation SET places_disponibles = places_disponibles - ? " +
+                "WHERE id = ? AND places_disponibles >= ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setInt(1, quantity);
+            stmt.setInt(2, id);
+            stmt.setInt(3, quantity);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { e.printStackTrace(); }
         return false;

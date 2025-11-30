@@ -27,6 +27,7 @@ public class RepresentationSelectController {
     @FXML private TableColumn<Representation, String> colDate;
     @FXML private TableColumn<Representation, String> colSalle;
     @FXML private TableColumn<Representation, Integer> colPlaces;
+    @FXML private TableColumn<Representation, String> colPrix;
     @FXML private TextField searchField;
     @FXML private Pagination pagination;
 
@@ -41,6 +42,7 @@ public class RepresentationSelectController {
         colDate.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDateHeure().format(formatter)));
         colSalle.setCellValueFactory(new PropertyValueFactory<>("salle"));
         colPlaces.setCellValueFactory(new PropertyValueFactory<>("placesDisponibles"));
+        colPrix.setCellValueFactory(cell -> new SimpleStringProperty(String.format("%.2f €", cell.getValue().getPrix())));
     }
 
     public void setSpectacle(Spectacle spectacle) {
@@ -77,6 +79,7 @@ public class RepresentationSelectController {
         }
         return representation -> representation.getDateHeure().format(formatter).toLowerCase().contains(query)
                 || containsIgnoreCase(representation.getSalle(), query)
+                || String.valueOf(representation.getPrix()).contains(query)
                 || String.valueOf(representation.getId()).contains(query);
     }
 

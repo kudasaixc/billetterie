@@ -9,16 +9,18 @@ public class Representation {
     private LocalDateTime dateHeure;
     private String salle;
     private int placesDisponibles;
+    private double prix;
     private String spectacleTitle;
 
     public Representation() {}
 
-    public Representation(int id, int idSpectacle, LocalDateTime dateHeure, String salle, int placesDisponibles) {
+    public Representation(int id, int idSpectacle, LocalDateTime dateHeure, String salle, int placesDisponibles, double prix) {
         this.id = id;
         this.idSpectacle = idSpectacle;
         this.dateHeure = dateHeure;
         this.salle = salle;
         this.placesDisponibles = placesDisponibles;
+        this.prix = prix;
     }
 
     public int getId() {
@@ -59,6 +61,14 @@ public class Representation {
 
     public void setPlacesDisponibles(int placesDisponibles) {
         this.placesDisponibles = placesDisponibles;
+    }
+
+    public double getPrix() {
+        return prix;
+    }
+
+    public void setPrix(double prix) {
+        this.prix = prix;
     }
 
     public String getSpectacleTitle() {

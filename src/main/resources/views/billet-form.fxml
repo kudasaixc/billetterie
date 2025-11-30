@@ -39,6 +39,7 @@
                 <RowConstraints minHeight="40" />
                 <RowConstraints minHeight="40" />
                 <RowConstraints minHeight="40" />
+                <RowConstraints minHeight="40" />
             </rowConstraints>
 
             <Label text="Client" GridPane.rowIndex="0" GridPane.columnIndex="0" />
@@ -59,9 +60,12 @@
             <Button text="Sélectionner représentation" onAction="#openRepresentationSelection"
                     GridPane.rowIndex="2" GridPane.columnIndex="2" />
 
-            <Label text="Prix (€)" GridPane.rowIndex="3" GridPane.columnIndex="0" />
-            <TextField fx:id="prixField" promptText="Ex: 49.90"
-                       GridPane.rowIndex="3" GridPane.columnIndex="1" />
+            <Label text="Quantité" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+            <TextField fx:id="quantiteField" promptText="1" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+            <Label text="Prix (€)" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+            <TextField fx:id="prixField" promptText="Défini par la représentation" editable="false"
+                       GridPane.rowIndex="4" GridPane.columnIndex="1" />
         </GridPane>
 
         <HBox spacing="10" alignment="CENTER_RIGHT">

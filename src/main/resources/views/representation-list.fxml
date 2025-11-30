@@ -38,6 +38,7 @@
                     <TableColumn fx:id="colDate" text="Date"/>
                     <TableColumn fx:id="colSalle" text="Salle"/>
                     <TableColumn fx:id="colPlaces" text="Places"/>
+                    <TableColumn fx:id="colPrix" text="Prix (€)"/>
                 </columns>
             </TableView>
 

@@ -28,6 +28,7 @@ public class BilletFormController {
     @FXML private TextField spectacleField;
     @FXML private TextField representationField;
     @FXML private TextField prixField;
+    @FXML private TextField quantiteField;
 
     private final BilletDAO billetDAO = new BilletDAO();
     private final RepresentationDAO representationDAO = new RepresentationDAO();
@@ -41,6 +42,7 @@ public class BilletFormController {
         selectedClient = SelectedClient.get();
         selectedSpectacle = SelectedSpectacle.get();
         selectedRepresentation = SelectedRepresentation.get();
+        quantiteField.setText("1");
         refreshFields();
     }
 
@@ -57,6 +59,7 @@ public class BilletFormController {
         selectedSpectacle = SelectedSpectacle.get();
         selectedRepresentation = null;
         SelectedRepresentation.clear();
+        quantiteField.setText("1");
         refreshFields();
     }
 
@@ -95,35 +98,46 @@ public class BilletFormController {
             return;
         }
 
-        double prix;
+        int quantite;
         try {
-            prix = Double.parseDouble(prixField.getText());
-            if (prix <= 0) {
+            quantite = Integer.parseInt(quantiteField.getText());
+            if (quantite <= 0) {
                 throw new NumberFormatException();
             }
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Prix invalide", "Merci d'indiquer un prix valide (ex: 49.90).");
+            showAlert(Alert.AlertType.ERROR, "Quantité invalide", "Merci d'indiquer une quantité entière positive.");
             return;
         }
 
-        if (selectedRepresentation.getPlacesDisponibles() <= 0) {
-            showAlert(Alert.AlertType.WARNING, "Plus de places", "Il n'y a plus de places disponibles pour cette représentation.");
+        double prix = selectedRepresentation.getPrix();
+        prixField.setText(String.format("%.2f", prix));
+
+        if (selectedRepresentation.getPlacesDisponibles() < quantite) {
+            showAlert(Alert.AlertType.WARNING, "Plus de places", "Il n'y a pas assez de places disponibles pour cette représentation.");
             return;
         }
 
-        String numero = billetDAO.generateNumero();
-        Billet billet = new Billet(0, numero, selectedRepresentation.getId(), selectedClient.getId(), prix, LocalDateTime.now());
+        boolean insertedAll = true;
+        for (int i = 0; i < quantite; i++) {
+            String numero = billetDAO.generateNumero();
+            Billet billet = new Billet(0, numero, selectedRepresentation.getId(), selectedClient.getId(), prix, LocalDateTime.now());
+            if (!billetDAO.insert(billet)) {
+                insertedAll = false;
+                break;
+            }
+        }
 
-        boolean inserted = billetDAO.insert(billet);
-        boolean decremented = representationDAO.decrementPlaces(selectedRepresentation.getId());
+        boolean decremented = insertedAll && representationDAO.decrementPlaces(selectedRepresentation.getId(), quantite);
+        if (decremented) {
+            selectedRepresentation.setPlacesDisponibles(selectedRepresentation.getPlacesDisponibles() - quantite);
+        }
 
-        if (inserted) {
-            showAlert(Alert.AlertType.INFORMATION, "Billet créé", "Le billet " + numero + " a été généré avec succès." +
-                    (decremented ? " Stock mis à jour." : ""));
+        if (insertedAll && decremented) {
+            showAlert(Alert.AlertType.INFORMATION, "Billets créés", quantite + " billet(s) ont été générés avec succès.");
             clearSelections();
             SceneSwitcher.switchTo("views/billet-list.fxml", "Billets");
         } else {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "L'enregistrement du billet a échoué.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "L'enregistrement des billets a échoué. Merci de réessayer.");
         }
     }
 
@@ -137,11 +151,12 @@ public class BilletFormController {
         clientField.setText(selectedClient == null ? "" : selectedClient.getPrenom() + " " + selectedClient.getNom());
         spectacleField.setText(selectedSpectacle == null ? "" : selectedSpectacle.getTitre());
         representationField.setText(selectedRepresentation == null ? "" : formatRepresentation(selectedRepresentation));
+        prixField.setText(selectedRepresentation == null ? "" : String.format("%.2f", selectedRepresentation.getPrix()));
     }
 
     private String formatRepresentation(Representation representation) {
         return representation.getDateHeure().toString() + " - " + representation.getSalle() +
-                " (" + representation.getPlacesDisponibles() + " places)";
+                " (" + representation.getPlacesDisponibles() + " places, " + String.format("%.2f€", representation.getPrix()) + ")";
     }
 
     private void openModal(String resource, String title, Runnable afterClose) {
@@ -164,6 +179,8 @@ public class BilletFormController {
         SelectedClient.clear();
         SelectedSpectacle.clear();
         SelectedRepresentation.clear();
+        quantiteField.setText("1");
+        prixField.clear();
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {

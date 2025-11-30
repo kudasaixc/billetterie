@@ -15,6 +15,7 @@ public class RepresentationFormController {
     @FXML private TextField fieldDateHeure;
     @FXML private TextField fieldSalle;
     @FXML private TextField fieldPlaces;
+    @FXML private TextField fieldPrix;
 
     private RepresentationDAO dao = new RepresentationDAO();
 
@@ -24,13 +25,18 @@ public class RepresentationFormController {
             int spectacleId = Integer.parseInt(fieldIdSpectacle.getText());
             LocalDateTime date = LocalDateTime.parse(fieldDateHeure.getText());
             int places = Integer.parseInt(fieldPlaces.getText());
+            double prix = Double.parseDouble(fieldPrix.getText());
+            if (places < 0 || prix <= 0) {
+                throw new IllegalArgumentException();
+            }
 
             Representation r = new Representation(
                     0,
                     spectacleId,
                     date,
                     fieldSalle.getText(),
-                    places
+                    places,
+                    prix
             );
 
             dao.insert(r);

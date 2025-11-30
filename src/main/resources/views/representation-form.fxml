@@ -34,7 +34,10 @@
         <Label text="Places disponibles" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
         <TextField fx:id="fieldPlaces" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-        <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2">
+        <Label text="Prix (€)" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="fieldPrix" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2">
             <Button text="Enregistrer" onAction="#save"/>
             <Button text="Annuler" onAction="#cancel"/>
         </HBox>

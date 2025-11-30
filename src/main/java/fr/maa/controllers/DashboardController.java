@@ -5,6 +5,7 @@ import fr.maa.dao.RepresentationDAO;
 import fr.maa.dao.SpectacleDAO;
 import fr.maa.models.SpectacleStat;
 import fr.maa.models.VenteParJour;
+import fr.maa.utils.SceneSwitcher;
 import javafx.fxml.FXML;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
@@ -52,6 +53,11 @@ public class DashboardController {
         totalRepresentationsLabel.setText(String.valueOf(representationDAO.getTotalRepresentations()));
         totalBilletsLabel.setText(String.valueOf(billetDAO.getTotalBilletsVendus()));
         chiffreAffairesLabel.setText(formatCurrency(billetDAO.getChiffreAffaires()));
+    }
+
+    @FXML
+    public void back() {
+        SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
     }
 
     private void loadTopSpectaclesCharts() {

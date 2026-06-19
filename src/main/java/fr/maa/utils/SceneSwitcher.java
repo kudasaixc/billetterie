@@ -5,7 +5,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SceneSwitcher {
+
+    private static final Logger LOGGER = Logger.getLogger(SceneSwitcher.class.getName());
 
     private static Stage mainStage;
 
@@ -22,7 +27,7 @@ public class SceneSwitcher {
             mainStage.setScene(scene);
             mainStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Impossible de charger la vue : " + fxmlPath, e);
         }
     }
 }

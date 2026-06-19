@@ -5,8 +5,12 @@ import fr.maa.models.Representation;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RepresentationDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(RepresentationDAO.class.getName());
 
     private final Connection conn = Database.getConnection();
 
@@ -30,7 +34,7 @@ public class RepresentationDAO {
                 list.add(r);
             }
 
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
 
         return list;
     }
@@ -55,7 +59,7 @@ public class RepresentationDAO {
                 r.setSpectacleTitle(rs.getString("spectacle_title"));
                 list.add(r);
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
 
         return list;
     }
@@ -78,7 +82,7 @@ public class RepresentationDAO {
                 r.setSpectacleTitle(rs.getString("spectacle_title"));
                 return r;
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return null;
     }
 
@@ -93,21 +97,34 @@ public class RepresentationDAO {
             stmt.setDouble(5, r.getPrix());
 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
 
         return false;
     }
 
-    public boolean decrementPlaces(int id, int quantity) {
+    /**
+     * Variante transactionnelle : utilise la connexion fournie (autocommit
+     * géré par l'appelant) et propage les {@link SQLException} pour permettre
+     * un rollback de la transaction globale.
+     */
+    public boolean decrementPlaces(Connection connection, int id, int quantity) throws SQLException {
         String sql = "UPDATE representation SET places_disponibles = places_disponibles - ? " +
                 "WHERE id = ? AND places_disponibles >= ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, quantity);
             stmt.setInt(2, id);
             stmt.setInt(3, quantity);
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
-        return false;
+        }
+    }
+
+    public boolean decrementPlaces(int id, int quantity) {
+        try {
+            return decrementPlaces(conn, id, quantity);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du décrément des places", e);
+            return false;
+        }
     }
 
     public double getTauxRemplissage(int representationId) {
@@ -130,7 +147,7 @@ public class RepresentationDAO {
                 return (double) billetsVendus / capacite;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return 0;
     }
@@ -143,7 +160,7 @@ public class RepresentationDAO {
                 return rs.getInt("total");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return 0;
     }
@@ -152,7 +169,7 @@ public class RepresentationDAO {
         try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM representation WHERE id=?")) {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return false;
     }
 }

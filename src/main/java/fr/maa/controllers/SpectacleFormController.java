@@ -18,8 +18,12 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SpectacleFormController {
+
+    private static final Logger LOGGER = Logger.getLogger(SpectacleFormController.class.getName());
 
     @FXML private TextField fieldTitre;
     @FXML private TextField fieldLieu;
@@ -127,7 +131,7 @@ public class SpectacleFormController {
             selectedImagePath = "images/" + fileName;
             updateImagePreview(selectedImagePath);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'import de l'image du spectacle", e);
         }
     }
 

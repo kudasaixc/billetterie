@@ -3,14 +3,19 @@ package fr.maa.dao;
 import fr.maa.models.Billet;
 import fr.maa.models.SpectacleStat;
 import fr.maa.models.VenteParJour;
+import fr.maa.utils.BilletNumeroGenerator;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BilletDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(BilletDAO.class.getName());
 
     private final Connection conn = Database.getConnection();
 
@@ -42,7 +47,7 @@ public class BilletDAO {
                 list.add(b);
             }
 
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
 
         return list;
     }
@@ -77,15 +82,20 @@ public class BilletDAO {
                 list.add(b);
             }
 
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
 
         return list;
     }
 
-    public boolean insert(Billet b) {
+    /**
+     * Variante transactionnelle : utilise la connexion fournie (autocommit
+     * géré par l'appelant) et propage les {@link SQLException} pour permettre
+     * un rollback de la transaction globale.
+     */
+    public boolean insert(Connection connection, Billet b) throws SQLException {
         String sql = "INSERT INTO billet (numero, id_representation, id_client, prix, date_achat) VALUES (?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, b.getNumero());
             stmt.setInt(2, b.getIdRepresentation());
             stmt.setInt(3, b.getIdClient());
@@ -93,9 +103,16 @@ public class BilletDAO {
             stmt.setTimestamp(5, Timestamp.valueOf(b.getDateAchat()));
 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
 
-        return false;
+    public boolean insert(Billet b) {
+        try {
+            return insert(conn, b);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'insertion du billet", e);
+            return false;
+        }
     }
 
     public boolean update(Billet b) {
@@ -110,7 +127,7 @@ public class BilletDAO {
             stmt.setInt(6, b.getId());
 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
 
         return false;
     }
@@ -119,7 +136,7 @@ public class BilletDAO {
         try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM billet WHERE id=?")) {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return false;
     }
 
@@ -131,7 +148,7 @@ public class BilletDAO {
                 return rs.getInt("total");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return 0;
     }
@@ -144,7 +161,7 @@ public class BilletDAO {
                 return rs.getDouble("ca");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return 0;
     }
@@ -169,7 +186,7 @@ public class BilletDAO {
                 ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
 
         return stats;
@@ -188,35 +205,37 @@ public class BilletDAO {
                 ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
 
         return ventes;
     }
 
-    public String generateNumero() {
+    /**
+     * Variante transactionnelle : génère le numéro suivant en lisant le dernier
+     * numéro sur la connexion fournie. Les insertions non encore committées de
+     * la même transaction sont visibles, ce qui garantit l'unicité au sein d'un
+     * achat multi-billets. Propage les {@link SQLException} pour le rollback.
+     */
+    public String generateNumero(Connection connection) throws SQLException {
         int year = LocalDate.now().getYear();
-        String prefix = "B" + year + "-";
         String sql = "SELECT numero FROM billet WHERE numero LIKE ? ORDER BY numero DESC LIMIT 1";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, prefix + "%");
-            ResultSet rs = stmt.executeQuery();
-            int next = 1;
-            if (rs.next()) {
-                String numero = rs.getString("numero");
-                String[] parts = numero.split("-");
-                if (parts.length == 2) {
-                    try {
-                        next = Integer.parseInt(parts[1]) + 1;
-                    } catch (NumberFormatException ignored) {
-                        next = 1;
-                    }
-                }
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, BilletNumeroGenerator.prefix(year) + "%");
+            try (ResultSet rs = stmt.executeQuery()) {
+                String last = rs.next() ? rs.getString("numero") : null;
+                return BilletNumeroGenerator.format(year, BilletNumeroGenerator.nextSequence(last));
             }
-            return String.format("%s%06d", prefix, next);
+        }
+    }
+
+    public String generateNumero() {
+        try {
+            return generateNumero(conn);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return String.format("%s%06d", prefix, (int) (System.currentTimeMillis() % 1_000_000));
+            LOGGER.log(Level.SEVERE, "Erreur lors de la génération du numéro de billet", e);
+            int year = LocalDate.now().getYear();
+            return BilletNumeroGenerator.format(year, (int) (System.currentTimeMillis() % 1_000_000));
         }
     }
 }

@@ -71,6 +71,15 @@ public class Representation {
         this.prix = prix;
     }
 
+    /**
+     * Règle métier : indique si la représentation dispose d'assez de places
+     * pour la quantité demandée. Sert de garde-fou côté application ; le
+     * contrôle faisant autorité reste le décrément conditionnel en base.
+     */
+    public boolean hasEnoughPlaces(int quantity) {
+        return quantity > 0 && quantity <= placesDisponibles;
+    }
+
     public String getSpectacleTitle() {
         return spectacleTitle;
     }

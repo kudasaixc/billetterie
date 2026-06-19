@@ -1,12 +1,12 @@
 package fr.maa.controllers;
 
-import fr.maa.dao.BilletDAO;
-import fr.maa.dao.RepresentationDAO;
 import fr.maa.models.Billet;
 import fr.maa.models.Client;
 import fr.maa.models.Representation;
 import fr.maa.models.Spectacle;
 import fr.maa.services.BilletPDFService;
+import fr.maa.services.PurchaseException;
+import fr.maa.services.PurchaseService;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedClient;
 import fr.maa.utils.SelectedRepresentation;
@@ -22,8 +22,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BilletFormController {
@@ -34,8 +32,7 @@ public class BilletFormController {
     @FXML private TextField prixField;
     @FXML private TextField quantiteField;
 
-    private final BilletDAO billetDAO = new BilletDAO();
-    private final RepresentationDAO representationDAO = new RepresentationDAO();
+    private final PurchaseService purchaseService = new PurchaseService();
     private final BilletPDFService billetPDFService = new BilletPDFService();
 
     private Client selectedClient;
@@ -121,39 +118,33 @@ public class BilletFormController {
         double prix = selectedRepresentation.getPrix();
         prixField.setText(String.format("%.2f", prix));
 
-        if (selectedRepresentation.getPlacesDisponibles() < quantite) {
+        if (!selectedRepresentation.hasEnoughPlaces(quantite)) {
             showAlert(Alert.AlertType.WARNING, "Plus de places", "Il n'y a pas assez de places disponibles pour cette représentation.");
             return;
         }
 
-        boolean insertedAll = true;
-        List<Billet> generatedBillets = new ArrayList<>();
-        for (int i = 0; i < quantite; i++) {
-            String numero = billetDAO.generateNumero();
-            Billet billet = new Billet(0, numero, selectedRepresentation.getId(), selectedClient.getId(), prix, LocalDateTime.now());
-            if (!billetDAO.insert(billet)) {
-                insertedAll = false;
-                break;
-            }
+        // Achat transactionnel : décrément des places + création des billets
+        // sont validés ensemble (commit) ou totalement annulés (rollback).
+        List<Billet> generatedBillets;
+        try {
+            generatedBillets = purchaseService.purchase(selectedRepresentation, selectedClient, quantite);
+        } catch (PurchaseException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
+            return;
+        }
+
+        // Enrichissement des libellés pour l'affichage et le PDF (hors transaction).
+        for (Billet billet : generatedBillets) {
             billet.setClientName(selectedClient.getPrenom() + " " + selectedClient.getNom());
             billet.setSpectacleTitle(selectedSpectacle.getTitre());
             billet.setRepresentationLabel(formatRepresentationLabel(selectedRepresentation));
-            generatedBillets.add(billet);
         }
+        selectedRepresentation.setPlacesDisponibles(selectedRepresentation.getPlacesDisponibles() - quantite);
 
-        boolean decremented = insertedAll && representationDAO.decrementPlaces(selectedRepresentation.getId(), quantite);
-        if (decremented) {
-            selectedRepresentation.setPlacesDisponibles(selectedRepresentation.getPlacesDisponibles() - quantite);
-        }
-
-        if (insertedAll && decremented) {
-            billetPDFService.generateBillets(generatedBillets, selectedClient, selectedSpectacle, selectedRepresentation, clientField.getScene() == null ? null : clientField.getScene().getWindow());
-            showAlert(Alert.AlertType.INFORMATION, "Billets créés", quantite + " billet(s) ont été générés avec succès.");
-            clearSelections();
-            SceneSwitcher.switchTo("views/billet-list.fxml", "Billets");
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "L'enregistrement des billets a échoué. Merci de réessayer.");
-        }
+        billetPDFService.generateBillets(generatedBillets, selectedClient, selectedSpectacle, selectedRepresentation, clientField.getScene() == null ? null : clientField.getScene().getWindow());
+        showAlert(Alert.AlertType.INFORMATION, "Billets créés", quantite + " billet(s) ont été générés avec succès.");
+        clearSelections();
+        SceneSwitcher.switchTo("views/billet-list.fxml", "Billets");
     }
 
     @FXML

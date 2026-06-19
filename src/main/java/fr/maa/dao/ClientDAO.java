@@ -6,8 +6,12 @@ import fr.maa.utils.BCrypt;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientDAO.class.getName());
 
     private Connection conn = Database.getConnection();
 
@@ -33,7 +37,7 @@ public class ClientDAO {
                 list.add(c);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return list;
     }
@@ -57,7 +61,7 @@ public class ClientDAO {
                         rs.getBoolean("is_admin")
                 );
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return null;
     }
 
@@ -75,7 +79,7 @@ public class ClientDAO {
             stmt.setBoolean(8, c.isAdmin());
 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return false;
     }
 
@@ -94,7 +98,7 @@ public class ClientDAO {
             stmt.setInt(9, c.getId());
 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return false;
     }
 
@@ -104,7 +108,7 @@ public class ClientDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return false;
     }
 
@@ -130,7 +134,7 @@ public class ClientDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return null;
     }
@@ -144,7 +148,7 @@ public class ClientDAO {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return false;
     }

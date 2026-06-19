@@ -6,8 +6,12 @@ import fr.maa.models.SpectacleStat;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SpectacleDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(SpectacleDAO.class.getName());
 
     private final Connection conn = Database.getConnection();
     private final boolean hasImagePathColumn = checkColumnExists("spectacle", "image_path");
@@ -16,7 +20,7 @@ public class SpectacleDAO {
         try (ResultSet rs = conn.getMetaData().getColumns(null, null, tableName, columnName)) {
             return rs.next();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return false;
     }
@@ -48,7 +52,7 @@ public class SpectacleDAO {
                 list.add(s);
             }
 
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return list;
     }
 
@@ -73,7 +77,7 @@ public class SpectacleDAO {
             }
 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
 
         return false;
     }
@@ -102,7 +106,7 @@ public class SpectacleDAO {
             }
 
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
 
         return false;
     }
@@ -111,7 +115,7 @@ public class SpectacleDAO {
         try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM spectacle WHERE id=?")) {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return false;
     }
 
@@ -123,7 +127,7 @@ public class SpectacleDAO {
                 return rs.getInt("total");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return 0;
     }
@@ -148,7 +152,7 @@ public class SpectacleDAO {
                 ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
 
         return stats;

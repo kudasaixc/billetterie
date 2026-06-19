@@ -1,11 +1,11 @@
 package fr.maa.controllers;
 
-import fr.maa.dao.BilletDAO;
-import fr.maa.dao.RepresentationDAO;
 import fr.maa.models.Billet;
 import fr.maa.models.Representation;
 import fr.maa.models.Spectacle;
 import fr.maa.services.BilletPDFService;
+import fr.maa.services.PurchaseException;
+import fr.maa.services.PurchaseService;
 import fr.maa.utils.PurchaseContext;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.Session;
@@ -14,8 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentController {
@@ -35,8 +33,7 @@ public class PaymentController {
     @FXML
     private Button confirmButton;
 
-    private final BilletDAO billetDAO = new BilletDAO();
-    private final RepresentationDAO representationDAO = new RepresentationDAO();
+    private final PurchaseService purchaseService = new PurchaseService();
     private final BilletPDFService billetPDFService = new BilletPDFService();
 
     @FXML
@@ -75,27 +72,15 @@ public class PaymentController {
             return;
         }
 
-        if (!representationDAO.decrementPlaces(representation.getId(), quantity)) {
-            errorLabel.setText("Plus assez de places disponibles");
+        // L'achat (décrément des places + création des billets) est réalisé
+        // dans une transaction unique : tout réussit ou rien n'est enregistré.
+        List<Billet> createdBillets;
+        try {
+            createdBillets = purchaseService.purchase(representation, Session.getUser(), quantity);
+        } catch (PurchaseException e) {
+            errorLabel.setText(e.getMessage());
             confirmButton.setDisable(false);
             return;
-        }
-
-        List<Billet> createdBillets = new ArrayList<>();
-
-        for (int i = 0; i < quantity; i++) {
-            Billet billet = new Billet();
-            billet.setNumero(billetDAO.generateNumero());
-            billet.setIdRepresentation(representation.getId());
-            billet.setIdClient(Session.getUser().getId());
-            billet.setPrix(representation.getPrix());
-            billet.setDateAchat(LocalDateTime.now());
-            if (!billetDAO.insert(billet)) {
-                errorLabel.setText("Erreur lors de la création du billet");
-                confirmButton.setDisable(false);
-                return;
-            }
-            createdBillets.add(billet);
         }
 
         billetPDFService.generateBillets(

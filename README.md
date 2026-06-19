@@ -108,7 +108,7 @@ Tables utilisées :
 - `representation.places_disponibles` → décrémenté par achat  
 - `client.is_admin` → rôles / permissions  
 
-Le script SQL complet se trouve dans `/database/schema.sql`.
+Le script SQL complet se trouve dans `sql/billetterie_template.sql`.
 
 ---
 
@@ -140,9 +140,14 @@ Le script SQL complet se trouve dans `/database/schema.sql`.
 mvn clean install
 
 ### 2. Lancer MySQL avec la base :
-source database/schema.sql
+mysql -u root -p < sql/billetterie_template.sql
 
-### 3. Lancer l’application :
+### 3. Configurer la connexion :
+Les paramètres de connexion sont externalisés dans
+`src/main/resources/config.properties` (`db.url`, `db.user`, `db.password`).
+Adaptez-les à votre environnement avant le lancement.
+
+### 4. Lancer l’application :
 mvn clean javafx:run
 
 ---

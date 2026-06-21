@@ -42,7 +42,14 @@ class BCryptTest {
         String hash1 = BCrypt.hashPassword(clair);
         String hash2 = BCrypt.hashPassword(clair);
         assertNotEquals(hash1, hash2);
-        // Mais les deux restent valides
+    }
+
+    @Test
+    @DisplayName("Deux hash distincts du même mot de passe restent valides")
+    void hashAvecSelsDifferentsRestentValides() {
+        String clair = "memeMotDePasse";
+        String hash1 = BCrypt.hashPassword(clair);
+        String hash2 = BCrypt.hashPassword(clair);
         assertTrue(BCrypt.checkpw(clair, hash1));
         assertTrue(BCrypt.checkpw(clair, hash2));
     }

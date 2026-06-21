@@ -1,8 +1,8 @@
 # 🎟️ Billetterie Tic'n Go — Application JavaFX & MySQL  
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kudasai_billetterie&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kudasai_billetterie)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=kudasai_billetterie&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=kudasai_billetterie)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kudasai_billetterie&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kudasai_billetterie)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kudasaixc_billetterie&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kudasaixc_billetterie)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=kudasaixc_billetterie&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=kudasaixc_billetterie)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kudasaixc_billetterie&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kudasaixc_billetterie)
 
 Système complet de gestion de billetterie, développé en JavaFX (MVC), avec base de données MySQL/MariaDB, authentification sécurisée, dashboard statistique, génération de billets PDF et outils d'administration.
 

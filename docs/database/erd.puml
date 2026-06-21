@@ -1,0 +1,80 @@
+@startuml billetterie-erd
+' Modèle physique de données (MPD) — base "billetterie"
+' Rendu : VS Code (extension PlantUML), IntelliJ, ou https://www.plantuml.com/plantuml
+' Source de vérité : sql/billetterie_template.sql
+
+hide circle
+skinparam linetype ortho
+skinparam roundcorner 8
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FDFDFD
+  BorderColor #2C3E50
+  ArrowColor #2C3E50
+}
+title Billetterie — Modèle physique de données (MySQL / MariaDB, InnoDB)
+
+entity "client" as client {
+  * id : INT <<PK>> <<AUTO_INCREMENT>>
+  --
+  * pseudo : VARCHAR(50)
+  * nom : VARCHAR(100)
+  * prenom : VARCHAR(100)
+    numero : VARCHAR(20)
+  * email : VARCHAR(150) <<UNIQUE>>
+  * password : VARCHAR(255)
+    adresse : VARCHAR(255)
+  * is_admin : TINYINT(1) = 0
+}
+
+entity "spectacle" as spectacle {
+  * id : INT <<PK>> <<AUTO_INCREMENT>>
+  --
+  * titre : VARCHAR(150)
+    lieu : VARCHAR(150)
+    affiche : VARCHAR(255)
+    tags : VARCHAR(255)
+    duree : INT
+    description_courte : TEXT
+    description_longue : TEXT
+    langue : VARCHAR(50)
+    age_minimum : INT
+    photos : VARCHAR(255)
+}
+
+entity "representation" as representation {
+  * id : INT <<PK>> <<AUTO_INCREMENT>>
+  --
+  * id_spectacle : INT <<FK>>
+  * date_heure : DATETIME
+    salle : VARCHAR(150)
+  * prix : DOUBLE
+  * places_disponibles : INT
+}
+
+entity "billet" as billet {
+  * id : INT <<PK>> <<AUTO_INCREMENT>>
+  --
+  * numero : VARCHAR(50) <<UNIQUE>>
+  * id_representation : INT <<FK>>
+  * id_client : INT <<FK>>
+  * prix : DOUBLE
+  * date_achat : DATETIME = CURRENT_TIMESTAMP
+}
+
+' Relations (cardinalités crow's foot)
+' ON DELETE CASCADE sur toutes les clés étrangères
+spectacle ||--o{ representation : "programme\n(ON DELETE CASCADE)"
+representation ||--o{ billet : "donne lieu à\n(ON DELETE CASCADE)"
+client ||--o{ billet : "achète\n(ON DELETE CASCADE)"
+
+legend right
+  | Symbole | Signification |
+  | *       | NOT NULL |
+  | <<PK>>  | Clé primaire |
+  | <<FK>>  | Clé étrangère |
+  | <<UNIQUE>> | Contrainte d'unicité |
+  | ||--o{  | 1 vers 0..N |
+endlegend
+
+@enduml

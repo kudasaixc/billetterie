@@ -115,6 +115,9 @@ Tables utilisées :
 
 Le script SQL complet se trouve dans `sql/billetterie_template.sql`.
 
+📐 La **modélisation de la base** (diagramme entité-association PlantUML + Mermaid,
+dictionnaire de données, cardinalités) est documentée dans [`docs/`](docs/README.md).
+
 ---
 
 ## 🧰 Technologies & Librairies

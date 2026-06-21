@@ -1,0 +1,48 @@
+%% Modèle entité-association de la base "billetterie" (Mermaid)
+%% Rendu : GitHub (natif), mermaid.live, VS Code (extension Mermaid)
+%% Source de vérité : sql/billetterie_template.sql
+erDiagram
+    client {
+        int id PK "AUTO_INCREMENT"
+        varchar pseudo "NOT NULL"
+        varchar nom "NOT NULL"
+        varchar prenom "NOT NULL"
+        varchar numero
+        varchar email UK "NOT NULL"
+        varchar password "NOT NULL"
+        varchar adresse
+        tinyint is_admin "NOT NULL, defaut 0"
+    }
+    spectacle {
+        int id PK "AUTO_INCREMENT"
+        varchar titre "NOT NULL"
+        varchar lieu
+        varchar affiche
+        varchar tags
+        int duree
+        text description_courte
+        text description_longue
+        varchar langue
+        int age_minimum
+        varchar photos
+    }
+    representation {
+        int id PK "AUTO_INCREMENT"
+        int id_spectacle FK "NOT NULL"
+        datetime date_heure "NOT NULL"
+        varchar salle
+        double prix "NOT NULL"
+        int places_disponibles "NOT NULL"
+    }
+    billet {
+        int id PK "AUTO_INCREMENT"
+        varchar numero UK "NOT NULL"
+        int id_representation FK "NOT NULL"
+        int id_client FK "NOT NULL"
+        double prix "NOT NULL"
+        datetime date_achat "defaut CURRENT_TIMESTAMP"
+    }
+
+    spectacle ||--o{ representation : "programme"
+    representation ||--o{ billet : "donne lieu a"
+    client ||--o{ billet : "achete"

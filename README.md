@@ -134,21 +134,69 @@ Le script SQL complet se trouve dans `sql/billetterie_template.sql`.
 
 ---
 
+## ✅ Prérequis
+
+Le projet suppose que les outils suivants sont **installés au préalable** :
+
+| Outil | Version | Vérifier |
+|-------|---------|----------|
+| **JDK** (OpenJDK) | 21+ | `java -version` |
+| **Maven** | 3.9+ | `mvn -v` |
+| **MySQL** *ou* **MariaDB** | MySQL 8.x / MariaDB 10+ | `mysql --version` |
+
+> JavaFX n'est **pas** à installer séparément : les modules sont récupérés automatiquement par Maven.
+
+### Installation rapide
+
+**Windows** (via [winget](https://learn.microsoft.com/windows/package-manager/winget/)) :
+```powershell
+winget install Microsoft.OpenJDK.21
+winget install MariaDB.Server          # ou : winget install Oracle.MySQL
+# Maven n'est pas dans winget : télécharger https://maven.apache.org/download.cgi,
+# décompresser, puis ajouter le dossier bin\ au PATH.
+```
+
+**macOS** (Homebrew) :
+```bash
+brew install openjdk@21 maven mariadb
+```
+
+**Linux** (Debian/Ubuntu) :
+```bash
+sudo apt install openjdk-21-jdk maven mariadb-server
+```
+
+Vérifiez que `JAVA_HOME` pointe vers le JDK 21 et que `java`, `mvn` et `mysql` sont accessibles dans le `PATH`.
+
+---
+
 ## ▶️ Lancer le projet
 
-### 1. Importer le projet
-mvn clean install
+### 1. Cloner le dépôt
+```bash
+git clone https://github.com/kudasaixc/billetterie.git
+cd billetterie
+```
 
-### 2. Lancer MySQL avec la base :
+### 2. Créer la base de données
+```bash
 mysql -u root -p < sql/billetterie_template.sql
+```
 
-### 3. Configurer la connexion :
+### 3. Configurer la connexion
 Les paramètres de connexion sont externalisés dans
 `src/main/resources/config.properties` (`db.url`, `db.user`, `db.password`).
 Adaptez-les à votre environnement avant le lancement.
 
-### 4. Lancer l’application :
+### 4. Compiler et lancer les tests
+```bash
+mvn clean test
+```
+
+### 5. Lancer l’application
+```bash
 mvn clean javafx:run
+```
 
 ---
 
@@ -165,9 +213,10 @@ password : admin123
 - 📲 Application mobile (API REST)
 - 📸 Upload d’images pour spectacles
 - ⌛ Réservation temporaire (15 min) avec colonne `reserved_until`
-- 🧾 Factures PDF
-- 🧪 Tests unitaires JUnit + coverage
+- 🧪 Couverture de tests (JaCoCo) en complément des tests JUnit existants
 - 🎧 Mode scanner QR code pour contrôler les billets
+
+> ✅ **Déjà livré** : génération PDF des billets (OpenPDF + QR code ZXing) et premiers tests unitaires JUnit.
 
 ---
 

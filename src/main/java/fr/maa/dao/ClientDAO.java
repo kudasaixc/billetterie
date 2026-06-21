@@ -112,9 +112,23 @@ public class ClientDAO {
         return false;
     }
 
-    public Client login(String email, String password) {
+    /**
+     * Authentifie un client.
+     *
+     * @return le {@link Client} si l'authentification réussit,
+     *         {@code null} si l'email est inconnu ou le mot de passe incorrect.
+     * @throws SQLException si la base de données est injoignable ou mal
+     *         configurée. L'appelant peut ainsi distinguer un échec technique
+     *         d'un simple échec d'identifiants et afficher un message adapté.
+     */
+    public Client login(String email, String password) throws SQLException {
+        Connection c = Database.getConnection();
+        if (c == null) {
+            throw new SQLException("Connexion à la base de données indisponible.");
+        }
+
         String sql = "SELECT * FROM client WHERE email = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = c.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -133,8 +147,6 @@ public class ClientDAO {
                     );
                 }
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
         }
         return null;
     }

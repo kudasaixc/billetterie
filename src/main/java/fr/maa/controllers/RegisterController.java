@@ -9,7 +9,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class RegisterController {
+
+    private static final Logger LOGGER = Logger.getLogger(RegisterController.class.getName());
 
     @FXML private TextField pseudoField;
     @FXML private TextField nomField;
@@ -52,9 +58,14 @@ public class RegisterController {
         );
 
         if (clientDAO.register(client)) {
-            Client logged = clientDAO.login(emailField.getText(), passwordField.getText());
-            Session.setUser(logged);
-            SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            try {
+                Client logged = clientDAO.login(emailField.getText(), passwordField.getText());
+                Session.setUser(logged);
+                SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
+            } catch (SQLException e) {
+                LOGGER.log(Level.SEVERE, "Echec technique lors de la connexion après inscription", e);
+                showError("Compte créé, mais connexion impossible : base de données indisponible.");
+            }
         } else {
             showError("Impossible de créer le compte.");
         }

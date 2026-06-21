@@ -9,7 +9,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class LoginController {
+
+    private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
 
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
@@ -33,7 +39,16 @@ public class LoginController {
             return;
         }
 
-        Client client = clientDAO.login(email, password);
+        Client client;
+        try {
+            client = clientDAO.login(email, password);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Echec technique lors de la connexion", e);
+            showError("Impossible de contacter la base de données. "
+                    + "Vérifiez qu'elle est démarrée et correctement configurée.");
+            return;
+        }
+
         if (client == null) {
             showError("Identifiants invalides.");
             return;

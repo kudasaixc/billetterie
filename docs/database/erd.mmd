@@ -12,6 +12,7 @@ erDiagram
         varchar password "NOT NULL"
         varchar adresse
         tinyint is_admin "NOT NULL, defaut 0"
+        enum role "🔴 NOUVEAU - ADMIN|VENDEUR|CLIENT, defaut CLIENT"
     }
     spectacle {
         int id PK "AUTO_INCREMENT"
@@ -25,6 +26,7 @@ erDiagram
         varchar langue
         int age_minimum
         varchar photos
+        int id_vendeur FK "🔴 NOUVEAU - vers client.id, nullable, ON DELETE SET NULL"
     }
     representation {
         int id PK "AUTO_INCREMENT"
@@ -46,3 +48,4 @@ erDiagram
     spectacle ||--o{ representation : "programme"
     representation ||--o{ billet : "donne lieu a"
     client ||--o{ billet : "achete"
+    client ||--o{ spectacle : "🔴 gere (vendeur)"

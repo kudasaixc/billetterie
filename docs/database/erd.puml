@@ -25,6 +25,7 @@ entity "client" as client {
   * password : VARCHAR(255)
     adresse : VARCHAR(255)
   * is_admin : TINYINT(1) = 0
+  * <color:#FF0000>role : ENUM('ADMIN','VENDEUR','CLIENT') = 'CLIENT'</color>
 }
 
 entity "spectacle" as spectacle {
@@ -40,6 +41,7 @@ entity "spectacle" as spectacle {
     langue : VARCHAR(50)
     age_minimum : INT
     photos : VARCHAR(255)
+    <color:#FF0000>id_vendeur : INT <<FK>></color>
 }
 
 entity "representation" as representation {
@@ -67,6 +69,8 @@ entity "billet" as billet {
 spectacle ||--o{ representation : "programme\n(ON DELETE CASCADE)"
 representation ||--o{ billet : "donne lieu à\n(ON DELETE CASCADE)"
 client ||--o{ billet : "achète\n(ON DELETE CASCADE)"
+' Nouveauté : un vendeur (client) gère 0..N spectacles
+client ||--o{ spectacle #line:FF0000;line.bold : "<color:#FF0000>gère (vendeur)\n(ON DELETE SET NULL)</color>"
 
 legend right
   | Symbole | Signification |
@@ -75,6 +79,7 @@ legend right
   | <<FK>>  | Clé étrangère |
   | <<UNIQUE>> | Contrainte d'unicité |
   | ||--o{  | 1 vers 0..N |
+  | <color:#FF0000>rouge</color> | Nouveauté (espace vendeur / statistiques) |
 endlegend
 
 @enduml

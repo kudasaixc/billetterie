@@ -19,6 +19,19 @@ public class StatistiqueDAO {
 
     private static final Logger LOGGER = Logger.getLogger(StatistiqueDAO.class.getName());
 
+    // Requêtes constantes (aucune concaténation à l'exécution). Les agrégats
+    // utilisent des sous-requêtes corrélées plutôt que des JOIN directs pour
+    // éviter le fan-out qui fausserait la somme des places.
+    private static final String SQL_BASE =
+            "SELECT s.titre, "
+            + "COALESCE((SELECT SUM(r.places_disponibles) FROM representation r WHERE r.id_spectacle = s.id), 0) AS places_restantes, "
+            + "COALESCE((SELECT COUNT(b.id) FROM billet b JOIN representation r ON b.id_representation = r.id WHERE r.id_spectacle = s.id), 0) AS billets_vendus "
+            + "FROM spectacle s ";
+
+    private static final String SQL_TOUS = SQL_BASE + "ORDER BY s.titre";
+
+    private static final String SQL_PAR_VENDEUR = SQL_BASE + "WHERE s.id_vendeur = ? ORDER BY s.titre";
+
     private final Connection conn = Database.getConnection();
 
     // Présence optionnelle de la colonne `spectacle.id_vendeur`, nécessaire
@@ -62,25 +75,19 @@ public class StatistiqueDAO {
             return Collections.emptyList();
         }
 
-        String sql = "SELECT s.titre, "
-                + "COALESCE((SELECT SUM(r.places_disponibles) FROM representation r WHERE r.id_spectacle = s.id), 0) AS places_restantes, "
-                + "COALESCE((SELECT COUNT(b.id) FROM billet b JOIN representation r ON b.id_representation = r.id WHERE r.id_spectacle = s.id), 0) AS billets_vendus "
-                + "FROM spectacle s "
-                + (filtreVendeur ? "WHERE s.id_vendeur = ? " : "")
-                + "ORDER BY s.titre";
-
         List<RemplissageStat> stats = new ArrayList<>();
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(filtreVendeur ? SQL_PAR_VENDEUR : SQL_TOUS)) {
             if (filtreVendeur) {
                 stmt.setInt(1, vendeurId);
             }
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                stats.add(new RemplissageStat(
-                        rs.getString("titre"),
-                        rs.getInt("billets_vendus"),
-                        rs.getInt("places_restantes")
-                ));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    stats.add(new RemplissageStat(
+                            rs.getString("titre"),
+                            rs.getInt("billets_vendus"),
+                            rs.getInt("places_restantes")
+                    ));
+                }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);

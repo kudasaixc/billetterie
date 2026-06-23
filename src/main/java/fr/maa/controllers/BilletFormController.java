@@ -41,7 +41,7 @@ public class BilletFormController {
 
     @FXML
     public void initialize() {
-        if (!Session.isAdmin()) {
+        if (!Session.peutVendre()) {
             SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
             return;
         }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.GridPane?>
@@ -45,8 +45,8 @@
         <Label text="Adresse" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
         <TextField fx:id="fieldAdresse" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
 
-        <Label text="Admin ?" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-        <CheckBox fx:id="checkAdmin" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+        <Label text="Rôle" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+        <ChoiceBox fx:id="roleChoice" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
 
         <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2">
             <Button text="Enregistrer" onAction="#save"/>

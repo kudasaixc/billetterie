@@ -28,6 +28,7 @@
             <Label fx:id="welcomeLabel" text="Connecté" />
             <Button text="Tous les évènements" onAction="#openCatalog"/>
             <Button fx:id="dashboardButton" text="Tableau de bord" onAction="#openDashboard"/>
+            <Button fx:id="statistiquesButton" text="Statistiques de remplissage" onAction="#openStatistiques"/>
             <Button fx:id="clientsButton" text="Gestion des Clients" onAction="#openClients"/>
             <Button fx:id="spectaclesButton" text="Gestion des Spectacles" onAction="#openSpectacles"/>
             <Button fx:id="representationsButton" text="Gestion des Représentations" onAction="#openRepresentations"/>

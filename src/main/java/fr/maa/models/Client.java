@@ -10,7 +10,7 @@ public class Client {
     private String email;
     private String password;
     private String adresse;
-    private boolean isAdmin;
+    private Role role = Role.CLIENT;
 
     public Client() {}
 
@@ -23,7 +23,7 @@ public class Client {
         this.email = email;
         this.password = password;
         this.adresse = adresse;
-        this.isAdmin = isAdmin;
+        this.role = isAdmin ? Role.ADMIN : Role.CLIENT;
     }
 
     // getters/setters
@@ -51,6 +51,22 @@ public class Client {
     public String getAdresse() { return adresse; }
     public void setAdresse(String adresse) { this.adresse = adresse; }
 
-    public boolean isAdmin() { return isAdmin; }
-    public void setAdmin(boolean admin) { isAdmin = admin; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role == null ? Role.CLIENT : role; }
+
+    public boolean isAdmin() { return role == Role.ADMIN; }
+    public boolean isVendeur() { return role == Role.VENDEUR; }
+
+    /**
+     * Conservé pour compatibilité avec le code existant (formulaire client,
+     * inscription). Activer "admin" promeut au rôle ADMIN ; le désactiver
+     * rétrograde en CLIENT, sauf si l'utilisateur est VENDEUR (rôle préservé).
+     */
+    public void setAdmin(boolean admin) {
+        if (admin) {
+            this.role = Role.ADMIN;
+        } else if (this.role == Role.ADMIN) {
+            this.role = Role.CLIENT;
+        }
+    }
 }

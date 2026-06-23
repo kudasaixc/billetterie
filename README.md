@@ -217,6 +217,12 @@ password : admin123
 ### Client : 
 email : client@billetterie.local
 password : client123
+
+### Vendeur:
+email    : vendeur@billetterie.local
+password : admin123
+
+
 ---
 
 ## 📝 Avenir & Extensions (Roadmap)

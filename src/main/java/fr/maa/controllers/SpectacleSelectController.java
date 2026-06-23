@@ -3,6 +3,7 @@ package fr.maa.controllers;
 import fr.maa.dao.SpectacleDAO;
 import fr.maa.models.Spectacle;
 import fr.maa.utils.SelectedSpectacle;
+import fr.maa.utils.Session;
 import fr.maa.utils.TablePaginationHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,7 +36,13 @@ public class SpectacleSelectController {
         colTitre.setCellValueFactory(new PropertyValueFactory<>("titre"));
         colLieu.setCellValueFactory(new PropertyValueFactory<>("lieu"));
 
-        spectacles = FXCollections.observableArrayList(dao.getAll());
+        // Un vendeur ne peut vendre que pour ses propres spectacles ;
+        // l'admin peut vendre pour n'importe quel spectacle.
+        if (Session.isVendeur()) {
+            spectacles = FXCollections.observableArrayList(dao.getByVendeur(Session.getUser().getId()));
+        } else {
+            spectacles = FXCollections.observableArrayList(dao.getAll());
+        }
         TablePaginationHelper.setup(tableSpectacles, searchField, pagination, spectacles, this::filterSpectacle, 10);
     }
 

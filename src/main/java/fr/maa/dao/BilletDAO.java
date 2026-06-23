@@ -88,6 +88,46 @@ public class BilletDAO {
     }
 
     /**
+     * Billets dont le spectacle appartient au vendeur donné (via
+     * {@code spectacle.id_vendeur}). Permet de restreindre la billetterie d'un
+     * vendeur à ses propres spectacles, comme la page de statistiques.
+     */
+    public List<Billet> getAllByVendeur(int vendeurId) {
+        List<Billet> list = new ArrayList<>();
+        String sql = "SELECT b.*, r.date_heure, s.titre AS spectacle_title, c.nom AS client_nom, c.prenom AS client_prenom " +
+                "FROM billet b " +
+                "JOIN representation r ON b.id_representation = r.id " +
+                "JOIN spectacle s ON r.id_spectacle = s.id " +
+                "JOIN client c ON b.id_client = c.id " +
+                "WHERE s.id_vendeur = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, vendeurId);
+            ResultSet rs = stmt.executeQuery();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+            while (rs.next()) {
+                Billet b = new Billet(
+                        rs.getInt("id"),
+                        rs.getString("numero"),
+                        rs.getInt("id_representation"),
+                        rs.getInt("id_client"),
+                        rs.getDouble("prix"),
+                        rs.getTimestamp("date_achat").toLocalDateTime()
+                );
+                b.setRepresentationLabel(rs.getString("spectacle_title") + " - " +
+                        rs.getTimestamp("date_heure").toLocalDateTime().format(formatter));
+                b.setSpectacleTitle(rs.getString("spectacle_title"));
+                b.setClientName(rs.getString("client_prenom") + " " + rs.getString("client_nom"));
+                list.add(b);
+            }
+
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
+
+        return list;
+    }
+
+    /**
      * Variante transactionnelle : utilise la connexion fournie (autocommit
      * géré par l'appelant) et propage les {@link SQLException} pour permettre
      * un rollback de la transaction globale.

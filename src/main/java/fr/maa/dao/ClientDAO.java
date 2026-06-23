@@ -70,6 +70,28 @@ public class ClientDAO {
         return list;
     }
 
+    /**
+     * Liste les utilisateurs ayant le rôle VENDEUR (pour l'affectation d'un
+     * spectacle). Retourne une liste vide si la colonne `role` n'existe pas
+     * encore (migration non appliquée).
+     */
+    public List<Client> getVendeurs() {
+        List<Client> list = new ArrayList<>();
+        if (!hasRoleColumn) {
+            return list;
+        }
+        String sql = "SELECT * FROM client WHERE role = 'VENDEUR' ORDER BY nom, prenom";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
+        }
+        return list;
+    }
+
     public Client getById(int id) {
         String sql = "SELECT * FROM client WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

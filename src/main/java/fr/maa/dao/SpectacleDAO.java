@@ -65,6 +65,46 @@ public class SpectacleDAO {
         return list;
     }
 
+    /**
+     * Spectacles appartenant à un vendeur donné. Retourne une liste vide si la
+     * colonne {@code id_vendeur} n'existe pas encore (migration non appliquée).
+     */
+    public List<Spectacle> getByVendeur(int vendeurId) {
+        List<Spectacle> list = new ArrayList<>();
+        if (!hasVendeurColumn) {
+            return list;
+        }
+        String baseColumns = hasImagePathColumn
+                ? "*"
+                : "id, titre, lieu, affiche, tags, duree, description_courte, description_longue, langue, age_minimum, photos, id_vendeur";
+        String sql = "SELECT " + baseColumns + " FROM spectacle WHERE id_vendeur = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, vendeurId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Spectacle s = new Spectacle(
+                        rs.getInt("id"),
+                        rs.getString("titre"),
+                        rs.getString("lieu"),
+                        rs.getString("affiche"),
+                        rs.getString("tags"),
+                        rs.getInt("duree"),
+                        rs.getString("description_courte"),
+                        rs.getString("description_longue"),
+                        rs.getString("langue"),
+                        rs.getInt("age_minimum"),
+                        rs.getString("photos"),
+                        hasImagePathColumn ? rs.getString("image_path") : null
+                );
+                int idVendeur = rs.getInt("id_vendeur");
+                s.setIdVendeur(rs.wasNull() ? null : idVendeur);
+                list.add(s);
+            }
+        } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
+        return list;
+    }
+
     public boolean insert(Spectacle s) {
         // Colonnes optionnelles (image_path, id_vendeur) ajoutées dans le même
         // ordre côté colonnes et côté valeurs pour garder un binding cohérent.

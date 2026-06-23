@@ -31,6 +31,7 @@ erDiagram
         varchar password "NOT NULL"
         varchar adresse
         tinyint is_admin "NOT NULL, defaut 0"
+        enum role "🔴 NOUVEAU - ADMIN|VENDEUR|CLIENT, defaut CLIENT"
     }
     spectacle {
         int id PK "AUTO_INCREMENT"
@@ -44,6 +45,7 @@ erDiagram
         varchar langue
         int age_minimum
         varchar photos
+        int id_vendeur FK "🔴 NOUVEAU - vers client.id, nullable, ON DELETE SET NULL"
     }
     representation {
         int id PK "AUTO_INCREMENT"
@@ -65,6 +67,7 @@ erDiagram
     spectacle ||--o{ representation : "programme"
     representation ||--o{ billet : "donne lieu a"
     client ||--o{ billet : "achete"
+    client ||--o{ spectacle : "🔴 gere (vendeur)"
 ```
 
 ---
@@ -76,6 +79,7 @@ erDiagram
 | `spectacle` → `representation` | 1 spectacle a 0..N représentations | `representation.id_spectacle` → `spectacle.id` | `ON DELETE CASCADE` |
 | `representation` → `billet` | 1 représentation a 0..N billets | `billet.id_representation` → `representation.id` | `ON DELETE CASCADE` |
 | `client` → `billet` | 1 client achète 0..N billets | `billet.id_client` → `client.id` | `ON DELETE CASCADE` |
+| 🔴 `client` (vendeur) → `spectacle` | 1 vendeur gère 0..N spectacles | `spectacle.id_vendeur` → `client.id` | `ON DELETE SET NULL` |
 
 > Conséquence du `CASCADE` : supprimer un **spectacle** supprime ses **représentations**,
 > qui à leur tour suppriment les **billets** associés. Supprimer un **client** supprime ses billets.
@@ -96,6 +100,7 @@ erDiagram
 | password | VARCHAR(255) | NOT NULL (hash bcrypt) |
 | adresse | VARCHAR(255) | — |
 | is_admin | TINYINT(1) | NOT NULL, défaut `0` |
+| 🔴 $\textcolor{red}{\textsf{role}}$ | ENUM('ADMIN','VENDEUR','CLIENT') | NOT NULL, défaut `CLIENT` |
 
 ### `spectacle`
 | Colonne | Type | Contraintes |
@@ -111,6 +116,7 @@ erDiagram
 | langue | VARCHAR(50) | — |
 | age_minimum | INT | — |
 | photos | VARCHAR(255) | — |
+| 🔴 $\textcolor{red}{\textsf{id\\_vendeur}}$ | INT | NULL, FK → `client.id`, `ON DELETE SET NULL` |
 
 ### `representation`
 | Colonne | Type | Contraintes |
@@ -143,6 +149,7 @@ erDiagram
 | client | `idx_client_email_unique` | `email` (UNIQUE) |
 | spectacle | `idx_spectacle_titre` | `titre` |
 | spectacle | `idx_spectacle_tags` | `tags` |
+| 🔴 spectacle | `idx_spectacle_vendeur` | `id_vendeur` |
 | representation | `idx_rep_spectacle` | `id_spectacle` |
 | representation | `idx_rep_date` | `date_heure` |
 | representation | `idx_rep_prix` | `prix` |

@@ -138,6 +138,16 @@ Côté code :
 
 ## 5. Base de données
 
+### 🔴 Nouveautés par rapport au schéma initial
+
+> Éléments ajoutés (en rouge) — voir aussi les diagrammes
+> [`erd.puml`](database/erd.puml) / [`erd.mmd`](database/erd.mmd).
+
+- $\textcolor{red}{\textsf{client.role}}$ — `ENUM('ADMIN','VENDEUR','CLIENT')`, NOT NULL, défaut `CLIENT`
+- $\textcolor{red}{\textsf{spectacle.id\\_vendeur}}$ — `INT NULL`, FK → `client.id`, `ON DELETE SET NULL`
+- $\textcolor{red}{\textsf{relation client (vendeur) → spectacle}}$ — 1 vendeur gère 0..N spectacles
+- $\textcolor{red}{\textsf{index idx\\_spectacle\\_vendeur}}$ — sur `spectacle(id_vendeur)`
+
 | Fichier | Rôle |
 |---------|------|
 | `sql/billetterie_template.sql` | Schéma de référence : colonnes `role` et `id_vendeur`, FK, index, comptes et affectations de démo |

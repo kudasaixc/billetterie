@@ -66,6 +66,20 @@ existe pas encore (base pas migree) je renvoie une liste vide au lieu de tout
 montrer, comme ca on expose pas les donnees des autres par erreur.
 
 
+Affecter un spectacle a un vendeur
+
+Au debut l'affectation se faisait qu'en sql a la main. J'ai fini par l'ajouter
+direct dans l'appli. Dans le formulaire spectacle (cote admin) y a maintenant un
+menu deroulant Vendeur avec la liste des vendeurs et une option aucun. Quand
+l'admin enregistre le spectacle ca remplit id_vendeur et du coup le vendeur voit
+ses stats sans toucher a la base.
+
+Cote code j'ai ajoute un champ idVendeur dans le modele spectacle, le DAO lit et
+ecrit la colonne (en defensif au cas ou la colonne existe pas encore), et une
+methode dans ClientDAO pour recuperer que les vendeurs. Le id_vendeur peut etre
+null si le spectacle est affecte a personne.
+
+
 La base de donnees
 
 J'ai mis a jour le script template avec la colonne role, la colonne id_vendeur, un

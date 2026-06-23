@@ -1,17 +1,23 @@
 package fr.maa.controllers;
 
+import fr.maa.dao.ClientDAO;
 import fr.maa.dao.SpectacleDAO;
+import fr.maa.models.Client;
 import fr.maa.models.Spectacle;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedSpectacle;
 import fr.maa.utils.Session;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 
 import java.io.File;
 import java.net.URL;
@@ -35,10 +41,12 @@ public class SpectacleFormController {
     @FXML private TextField fieldLangue;
     @FXML private TextField fieldAgeMin;
     @FXML private TextField fieldPhotos;
+    @FXML private ChoiceBox<Client> vendeurChoice;
     @FXML private ImageView imagePreview;
     @FXML private Label imagePathLabel;
 
     private SpectacleDAO dao = new SpectacleDAO();
+    private final ClientDAO clientDAO = new ClientDAO();
     private Spectacle editing = null;
 
     private static final String IMAGES_DIR = "src/main/resources/images";
@@ -50,6 +58,7 @@ public class SpectacleFormController {
             SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
             return;
         }
+        setupVendeurChoice();
         editing = SelectedSpectacle.get();
         if (editing != null) {
             fieldTitre.setText(editing.getTitre());
@@ -63,9 +72,48 @@ public class SpectacleFormController {
             fieldAgeMin.setText(String.valueOf(editing.getAgeMinimum()));
             fieldPhotos.setText(editing.getPhotos());
             selectedImagePath = editing.getImagePath();
+            preselectVendeur(editing.getIdVendeur());
         }
 
         updateImagePreview(selectedImagePath);
+    }
+
+    /**
+     * Remplit le menu déroulant des vendeurs. La première entrée {@code null}
+     * représente "aucun vendeur affecté".
+     */
+    private void setupVendeurChoice() {
+        ObservableList<Client> items = FXCollections.observableArrayList();
+        items.add(null); // option "— Aucun —"
+        items.addAll(clientDAO.getVendeurs());
+        vendeurChoice.setItems(items);
+        vendeurChoice.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Client client) {
+                return client == null
+                        ? "— Aucun —"
+                        : client.getPrenom() + " " + client.getNom() + " (" + client.getEmail() + ")";
+            }
+
+            @Override
+            public Client fromString(String string) {
+                return null;
+            }
+        });
+        vendeurChoice.setValue(null);
+    }
+
+    private void preselectVendeur(Integer idVendeur) {
+        if (idVendeur == null) {
+            vendeurChoice.setValue(null);
+            return;
+        }
+        for (Client vendeur : vendeurChoice.getItems()) {
+            if (vendeur != null && vendeur.getId() == idVendeur) {
+                vendeurChoice.setValue(vendeur);
+                return;
+            }
+        }
     }
 
     @FXML
@@ -85,6 +133,10 @@ public class SpectacleFormController {
                 fieldPhotos.getText(),
                 selectedImagePath
         ) : editing;
+
+        Client selectedVendeur = vendeurChoice.getValue();
+        Integer idVendeur = selectedVendeur == null ? null : selectedVendeur.getId();
+        s.setIdVendeur(idVendeur);
 
         if (editing == null) {
             dao.insert(s);

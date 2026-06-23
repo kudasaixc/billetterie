@@ -14,6 +14,7 @@ public class Spectacle {
     private int ageMinimum;
     private String photos;
     private String imagePath;
+    private Integer idVendeur;
 
     public Spectacle() {}
 
@@ -72,4 +73,8 @@ public class Spectacle {
 
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+    /** Identifiant du vendeur propriétaire, ou {@code null} si non affecté. */
+    public Integer getIdVendeur() { return idVendeur; }
+    public void setIdVendeur(Integer idVendeur) { this.idVendeur = idVendeur; }
 }

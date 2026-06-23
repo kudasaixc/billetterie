@@ -1,6 +1,7 @@
 package fr.maa.dao;
 
 import fr.maa.models.Client;
+import fr.maa.models.Role;
 import fr.maa.utils.BCrypt;
 
 import java.sql.*;
@@ -15,6 +16,44 @@ public class ClientDAO {
 
     private Connection conn = Database.getConnection();
 
+    // Présence optionnelle de la colonne `role` : le code fonctionne que la
+    // migration SQL ait été appliquée ou non (même approche que SpectacleDAO).
+    private final boolean hasRoleColumn = checkColumnExists("client", "role");
+
+    private boolean checkColumnExists(String tableName, String columnName) {
+        try (ResultSet rs = conn.getMetaData().getColumns(null, null, tableName, columnName)) {
+            return rs.next();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
+        }
+        return false;
+    }
+
+    /**
+     * Construit un {@link Client} depuis la ligne courante. Le rôle provient de
+     * la colonne `role` si elle existe ; sinon il est déduit de `is_admin`.
+     */
+    private Client mapRow(ResultSet rs) throws SQLException {
+        Client c = new Client(
+                rs.getInt("id"),
+                rs.getString("pseudo"),
+                rs.getString("nom"),
+                rs.getString("prenom"),
+                rs.getString("numero"),
+                rs.getString("email"),
+                rs.getString("password"),
+                rs.getString("adresse"),
+                rs.getBoolean("is_admin")
+        );
+        if (hasRoleColumn) {
+            Role role = Role.fromString(rs.getString("role"));
+            if (role != null) {
+                c.setRole(role);
+            }
+        }
+        return c;
+    }
+
     public List<Client> getAll() {
         List<Client> list = new ArrayList<>();
         String sql = "SELECT * FROM client";
@@ -23,18 +62,7 @@ public class ClientDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Client c = new Client(
-                        rs.getInt("id"),
-                        rs.getString("pseudo"),
-                        rs.getString("nom"),
-                        rs.getString("prenom"),
-                        rs.getString("numero"),
-                        rs.getString("email"),
-                        rs.getString("password"),
-                        rs.getString("adresse"),
-                        rs.getBoolean("is_admin")
-                );
-                list.add(c);
+                list.add(mapRow(rs));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e);
@@ -49,24 +77,16 @@ public class ClientDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new Client(
-                        rs.getInt("id"),
-                        rs.getString("pseudo"),
-                        rs.getString("nom"),
-                        rs.getString("prenom"),
-                        rs.getString("numero"),
-                        rs.getString("email"),
-                        rs.getString("password"),
-                        rs.getString("adresse"),
-                        rs.getBoolean("is_admin")
-                );
+                return mapRow(rs);
             }
         } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
         return null;
     }
 
     public boolean insert(Client c) {
-        String sql = "INSERT INTO client (pseudo, nom, prenom, numero, email, password, adresse, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = hasRoleColumn
+                ? "INSERT INTO client (pseudo, nom, prenom, numero, email, password, adresse, is_admin, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                : "INSERT INTO client (pseudo, nom, prenom, numero, email, password, adresse, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, c.getPseudo());
@@ -77,6 +97,9 @@ public class ClientDAO {
             stmt.setString(6, hashPassword(c.getPassword()));
             stmt.setString(7, c.getAdresse());
             stmt.setBoolean(8, c.isAdmin());
+            if (hasRoleColumn) {
+                stmt.setString(9, c.getRole().name());
+            }
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
@@ -84,7 +107,9 @@ public class ClientDAO {
     }
 
     public boolean update(Client c) {
-        String sql = "UPDATE client SET pseudo=?, nom=?, prenom=?, numero=?, email=?, password=?, adresse=?, is_admin=? WHERE id=?";
+        String sql = hasRoleColumn
+                ? "UPDATE client SET pseudo=?, nom=?, prenom=?, numero=?, email=?, password=?, adresse=?, is_admin=?, role=? WHERE id=?"
+                : "UPDATE client SET pseudo=?, nom=?, prenom=?, numero=?, email=?, password=?, adresse=?, is_admin=? WHERE id=?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, c.getPseudo());
@@ -95,7 +120,12 @@ public class ClientDAO {
             stmt.setString(6, hashPassword(c.getPassword()));
             stmt.setString(7, c.getAdresse());
             stmt.setBoolean(8, c.isAdmin());
-            stmt.setInt(9, c.getId());
+            if (hasRoleColumn) {
+                stmt.setString(9, c.getRole().name());
+                stmt.setInt(10, c.getId());
+            } else {
+                stmt.setInt(9, c.getId());
+            }
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Erreur d'accès aux données", e); }
@@ -134,17 +164,7 @@ public class ClientDAO {
             if (rs.next()) {
                 String hashed = rs.getString("password");
                 if (hashed != null && BCrypt.checkpw(password, hashed)) {
-                    return new Client(
-                            rs.getInt("id"),
-                            rs.getString("pseudo"),
-                            rs.getString("nom"),
-                            rs.getString("prenom"),
-                            rs.getString("numero"),
-                            rs.getString("email"),
-                            hashed,
-                            rs.getString("adresse"),
-                            rs.getBoolean("is_admin")
-                    );
+                    return mapRow(rs);
                 }
             }
         }

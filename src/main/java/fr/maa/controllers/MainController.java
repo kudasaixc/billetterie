@@ -13,6 +13,7 @@ public class MainController {
     @FXML private Button clientsButton;
     @FXML private Button spectaclesButton;
     @FXML private Button representationsButton;
+    @FXML private Button statistiquesButton;
 
     @FXML
     public void initialize() {
@@ -25,16 +26,22 @@ public class MainController {
             welcomeLabel.setText("Connecté en tant que " + Session.getUser().getEmail());
         }
 
-        if (!Session.isAdmin()) {
-            dashboardButton.setVisible(false);
-            dashboardButton.setManaged(false);
-            clientsButton.setVisible(false);
-            clientsButton.setManaged(false);
-            spectaclesButton.setVisible(false);
-            spectaclesButton.setManaged(false);
-            representationsButton.setVisible(false);
-            representationsButton.setManaged(false);
+        // Affichage du menu selon les capacités de l'utilisateur. Le contrôle
+        // d'accès réel est dupliqué dans chaque contrôleur de destination
+        // (défense en profondeur) : masquer un bouton n'est pas une sécurité.
+        setVisible(dashboardButton, Session.isAdmin());
+        setVisible(clientsButton, Session.peutGererUsers());
+        setVisible(spectaclesButton, Session.peutGererSpectacles());
+        setVisible(representationsButton, Session.peutGererSpectacles());
+        setVisible(statistiquesButton, Session.peutVoirStatistiques());
+    }
+
+    private void setVisible(Button button, boolean visible) {
+        if (button == null) {
+            return;
         }
+        button.setVisible(visible);
+        button.setManaged(visible);
     }
 
     @FXML
@@ -65,6 +72,11 @@ public class MainController {
     @FXML
     public void openDashboard() {
         SceneSwitcher.switchTo("views/dashboard.fxml", "Dashboard");
+    }
+
+    @FXML
+    public void openStatistiques() {
+        SceneSwitcher.switchTo("views/statistiques.fxml", "Statistiques");
     }
 
     @FXML

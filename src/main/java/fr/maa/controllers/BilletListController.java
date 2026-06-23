@@ -50,7 +50,9 @@ public class BilletListController {
                 formatDate(cell.getValue().getDateAchat())));
         colPrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
 
-        if (Session.isAdmin()) {
+        // Admin et vendeur accèdent à la billetterie complète et peuvent vendre.
+        // Un client ne voit que ses propres billets et ne peut pas en émettre.
+        if (Session.peutVendre()) {
             billets = FXCollections.observableArrayList(dao.getAll());
         } else {
             billets = FXCollections.observableArrayList(dao.getAllByClient(Session.getUser().getId()));

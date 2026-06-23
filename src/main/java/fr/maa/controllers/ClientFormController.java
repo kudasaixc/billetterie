@@ -2,11 +2,13 @@ package fr.maa.controllers;
 
 import fr.maa.dao.ClientDAO;
 import fr.maa.models.Client;
+import fr.maa.models.Role;
 import fr.maa.utils.SceneSwitcher;
 import fr.maa.utils.SelectedClient;
 import fr.maa.utils.Session;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 
@@ -19,7 +21,7 @@ public class ClientFormController {
     @FXML private TextField fieldEmail;
     @FXML private TextField fieldPassword;
     @FXML private TextField fieldAdresse;
-    @FXML private CheckBox checkAdmin;
+    @FXML private ChoiceBox<Role> roleChoice;
 
     private ClientDAO dao = new ClientDAO();
     private Client editing = null;
@@ -30,6 +32,9 @@ public class ClientFormController {
             SceneSwitcher.switchTo("views/main.fxml", "Menu principal");
             return;
         }
+        roleChoice.setItems(FXCollections.observableArrayList(Role.values()));
+        roleChoice.setValue(Role.CLIENT);
+
         editing = SelectedClient.get();
         if (editing != null) {
             fieldPseudo.setText(editing.getPseudo());
@@ -38,7 +43,7 @@ public class ClientFormController {
             fieldNumero.setText(editing.getNumero());
             fieldEmail.setText(editing.getEmail());
             fieldAdresse.setText(editing.getAdresse());
-            checkAdmin.setSelected(editing.isAdmin());
+            roleChoice.setValue(editing.getRole());
         }
     }
 
@@ -53,6 +58,8 @@ public class ClientFormController {
             return;
         }
 
+        Role selectedRole = roleChoice.getValue() == null ? Role.CLIENT : roleChoice.getValue();
+
         if (editing == null) {
             Client c = new Client(
                 0,
@@ -63,8 +70,9 @@ public class ClientFormController {
                 fieldEmail.getText(),
                 fieldPassword.getText(),
                 fieldAdresse.getText(),
-                checkAdmin.isSelected()
+                false
             );
+            c.setRole(selectedRole);
             dao.insert(c);
         } else {
             editing.setPseudo(fieldPseudo.getText());
@@ -76,7 +84,7 @@ public class ClientFormController {
                 editing.setPassword(fieldPassword.getText());
             }
             editing.setAdresse(fieldAdresse.getText());
-            editing.setAdmin(checkAdmin.isSelected());
+            editing.setRole(selectedRole);
 
             dao.update(editing);
         }

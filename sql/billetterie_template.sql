@@ -19,7 +19,8 @@ CREATE TABLE client (
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     adresse VARCHAR(255),
-    is_admin TINYINT(1) NOT NULL DEFAULT 0
+    is_admin TINYINT(1) NOT NULL DEFAULT 0,
+    role ENUM('ADMIN','VENDEUR','CLIENT') NOT NULL DEFAULT 'CLIENT'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- TABLE SPECTACLE
@@ -34,7 +35,11 @@ CREATE TABLE spectacle (
     description_longue TEXT,
     langue VARCHAR(50),
     age_minimum INT,
-    photos VARCHAR(255)
+    photos VARCHAR(255),
+    id_vendeur INT NULL,
+    CONSTRAINT fk_spectacle_vendeur
+        FOREIGN KEY (id_vendeur) REFERENCES client(id)
+        ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- TABLE REPRESENTATION (prix PAR REPRESENTATION + places_disponibles)
@@ -146,11 +151,15 @@ INSERT INTO representation (id, id_spectacle, date_heure, salle, prix, places_di
 
 ALTER TABLE representation AUTO_INCREMENT = 19;
 
--- CLIENT DEMO ACCOUNT (password = admin123)
-INSERT INTO client (id, pseudo, nom, prenom, numero, email, password, adresse, is_admin) VALUES
-(1, 'admin', 'Admin', 'User', '0000000000', 'admin@billetterie.local', '$2b$12$FomE0ctopyqsXWk4F70fxOcdv6VnXv/81YYKaBJrRGWjL.0N7BN7C', '1 rue de la Billetterie', 1);
+-- COMPTES DEMO (mot de passe = admin123 pour les deux)
+INSERT INTO client (id, pseudo, nom, prenom, numero, email, password, adresse, is_admin, role) VALUES
+(1, 'admin', 'Admin', 'User', '0000000000', 'admin@billetterie.local', '$2b$12$FomE0ctopyqsXWk4F70fxOcdv6VnXv/81YYKaBJrRGWjL.0N7BN7C', '1 rue de la Billetterie', 1, 'ADMIN'),
+(2, 'vendeur', 'Vendeur', 'Demo', '0000000000', 'vendeur@billetterie.local', '$2b$12$FomE0ctopyqsXWk4F70fxOcdv6VnXv/81YYKaBJrRGWjL.0N7BN7C', '2 rue de la Billetterie', 0, 'VENDEUR');
 
-ALTER TABLE client AUTO_INCREMENT = 2;
+ALTER TABLE client AUTO_INCREMENT = 3;
+
+-- Affectation de quelques spectacles au vendeur de démo (pour ses statistiques).
+UPDATE spectacle SET id_vendeur = 2 WHERE id IN (1, 2, 3);
 
 -- INDEXES ---------------------------------------------------------------
 CREATE INDEX idx_client_pseudo ON client(pseudo);
@@ -159,6 +168,7 @@ CREATE UNIQUE INDEX idx_client_email_unique ON client(email);
 
 CREATE INDEX idx_spectacle_titre ON spectacle(titre);
 CREATE INDEX idx_spectacle_tags ON spectacle(tags);
+CREATE INDEX idx_spectacle_vendeur ON spectacle(id_vendeur);
 
 CREATE INDEX idx_rep_spectacle ON representation(id_spectacle);
 CREATE INDEX idx_rep_date ON representation(date_heure);

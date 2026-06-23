@@ -214,6 +214,9 @@ mvn clean javafx:run
 email : admin@billetterie.local
 password : admin123
 
+### Client : 
+email : client@billetterie.local
+password : client123
 ---
 
 ## 📝 Avenir & Extensions (Roadmap)
